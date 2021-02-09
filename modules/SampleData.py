@@ -30,7 +30,8 @@ class SampleData:
 								   [pd.Timestamp(2020, 11, 4, 10, 10), '50 degC core'],
 								   [pd.Timestamp(2020, 11, 7, 15, 10), '60 degC core']],
 					'core_sensors': ['X1', 'X2'],
-					'wall_sensors': ['K1', 'K2', 'K3']}
+					'wall_sensors': ['K1', 'K2', 'K3'],
+					'del_data': []}
 
 
 		self.SN2 = {'dir': 'C:\\Users\\karlisr\\OneDrive - NTNU\\3_PostDoc_Sintef\\01_laboratory_work\\01_large_test\\'
@@ -45,4 +46,5 @@ class SampleData:
 								{'start': 'timestamp', 'end': 'timestamp', 'name': 'name'},
 								{'start': 'timestamp', 'end': 'timestamp', 'name': 'name'}],
 					'core_sensors': ['X1', 'X2'],
-					'wall_sensors': ['K2', 'X3']}
+					'wall_sensors': ['K2', 'X3'],
+					'del_data': [{'sensor': 'R1', 'start': '', 'end': ''}]}

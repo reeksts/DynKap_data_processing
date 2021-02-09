@@ -31,7 +31,7 @@ data_path = path + measurement_data
 
 # Calibration fit figures (optional):
 calibration_figures = PlotCalibrationFigures(data_path, sample)
-calibration_figures.plot_calibration_figure()
+#calibration_figures.plot_calibration_figure()
 
 
 # Plot formatter
@@ -149,3 +149,8 @@ def plot_all_figures():
 											 formatter=formatter.std_paper_3x1_partial_width)
 
 plot_all_figures()
+
+def plot_important_plots():
+	pass
+
+
