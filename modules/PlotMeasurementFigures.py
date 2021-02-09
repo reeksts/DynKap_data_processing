@@ -34,6 +34,9 @@ class PlotMeasurementFigures:
 		self.direction_down = [['D1', 'D2', 'D3', 'D4', 'D5', 'D6'],
 							   ['MS9', 'MS10', 'MS11', 'MS12'],
 							   'Direction - down']
+		self.direction_names = {'direction_up': 'Direction - up',
+								'direction_rigth': 'Direction - right',
+								'direction_down': 'Direction - down'}
 		self.directions = [self.direction_up, self.direction_right, self.direction_down]
 		self.formatter = FigureFormatting()
 		self.add_hours_column_to_df()
@@ -496,6 +499,19 @@ class PlotMeasurementFigures:
 			plt.show()
 
 		plt.close()
+
+	def executor_time_series(self,
+							 ax,
+							 max_col_ind,
+							 curr_col_ind,
+							 max_row_ind,
+							 curr_row_ind,
+							 direction,
+							 formatter,
+							 title,
+							 power_line,
+							 xaxis_type,
+							 last_day):
 
 	def executor_temperature_series(self,
 									ax,
