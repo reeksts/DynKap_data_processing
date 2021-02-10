@@ -158,12 +158,13 @@ def plot_development():
 #plot_development()
 
 
-class PlottingOptions():
+class PlottingOptions:
     def __init__(self):
         self.plot_figures = PlotMeasurementFigures(df, timestamps, fignames, save_path, comsol_path, sample)
         self.formatter = FigureFormatting()
 
-    def combined_plot(self):
+    def all_combined_plot(self):
+        print('this line should executed')
         self.plot_figures.plot_all_measurements(folder=folders['01_combined_plots'],
                                                 formatter=formatter.std_paper_4x3_full_width)
 
