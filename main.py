@@ -145,12 +145,15 @@ def plot_all_figures():
 										  last_day=True)
 
 	# moisture gradient:
-	plot_figures.plot_all_moisture_gradients(folder=folders['01_combined_plots'],
-											 formatter=formatter.std_paper_3x1_partial_width)
+	plot_figures.plot_moisture_gradient(folder=folders['05_gradient_moisture'],
+										formatter=formatter.std_paper_1x1_partial_width)
 
-plot_all_figures()
+#plot_all_figures()
 
-def plot_important_plots():
-	pass
+def plot_development():
+	plot_figures.plot_moisture_gradient(folder=folders['05_gradient_moisture'],
+										formatter=formatter.std_paper_1x1_partial_width)
+
+plot_development()
 
 
