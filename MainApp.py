@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from modules.TestScript import PlottingOptions
 
+print('what the hell??????')
 
 class MainApp(tk.Tk):
     def __init__(self):
