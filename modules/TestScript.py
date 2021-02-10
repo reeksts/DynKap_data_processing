@@ -6,7 +6,6 @@ from modules.PlotMeasurementFigures import PlotMeasurementFigures
 from modules.PlotCalibrationFigures import PlotCalibrationFigures
 from modules.SampleData import SampleData
 from modules.FigureFormatting import FigureFormatting
-from MainApp import MainApp
 
 
 # Sample selection
@@ -241,12 +240,6 @@ class PlottingOptions():
         self.moisture_series_combined()
         self.moisture_gradient_combined()
         self.last_24h_plots()
-
-
-def main():
-    root = MainApp()
-    style = ttk.Style()
-    root.mainloop()
 
 
 

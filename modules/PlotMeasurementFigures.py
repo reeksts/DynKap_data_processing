@@ -68,7 +68,7 @@ class PlotMeasurementFigures:
 
 		# TEMPERATURE SERIES:
 		column = 0
-		for sensors in self.temp_directions:
+		for direction in self.temp_directions:
 			curr_col_ind = column
 			curr_row_ind = max_row_ind
 			self.executor_time_series(ax[0, column],
@@ -76,7 +76,7 @@ class PlotMeasurementFigures:
 									  curr_col_ind,
 									  max_row_ind,
 									  curr_row_ind,
-									  sensors,
+									  direction,
 									  formatter,
 									  title,
 									  power_line,
@@ -103,7 +103,7 @@ class PlotMeasurementFigures:
 
 		# MOISTURE SERIES:
 		column = 0
-		for sensors in self.moist_directions:
+		for direction in self.moist_directions:
 			curr_col_ind = column
 			curr_row_ind = max_row_ind
 			self.executor_time_series(ax[2, column],
@@ -111,7 +111,7 @@ class PlotMeasurementFigures:
 									  curr_col_ind,
 									  max_row_ind,
 									  curr_row_ind,
-									  sensors,
+									  direction,
 									  formatter,
 									  title,
 									  power_line,
@@ -122,7 +122,7 @@ class PlotMeasurementFigures:
 
 		# MOISTURE GRADIENTS:
 		column = 0
-		for direction in self.directions:
+		for direction in self.moist_directions:
 			curr_col_ind = column
 			curr_row_ind = max_row_ind
 			self.executor_gradients(ax[3, column],
@@ -413,7 +413,7 @@ class PlotMeasurementFigures:
 		max_row_ind = len(ax) - 1
 
 		row = 0
-		for direction in self.directions:
+		for direction in self.temp_directions:
 			curr_col_ind = 0
 			curr_row_ind = row
 			self.executor_gradients(ax[row],
@@ -507,7 +507,7 @@ class PlotMeasurementFigures:
 		max_row_ind = len(ax) - 1
 
 		row = 0
-		for direction in self.directions:
+		for direction in self.moist_directions:
 			curr_col_ind = 0
 			curr_row_ind = row
 			self.executor_gradients(ax[row],
@@ -655,9 +655,9 @@ class PlotMeasurementFigures:
 		if xaxis_type == 'hours':
 			ax.xaxis.set_major_formatter(FormatStrFormatter('%.0f'))
 		elif xaxis_type == 'datetime' and last_day:
-			ax.xaxis.set_major_formatter(DateFormatter('%m-%d  %H:%M'))
+			ax.xaxis.set_major_formatter(DateFormatter('%d-%m  %H:%M'))
 		else:
-			ax.xaxis.set_major_formatter(DateFormatter('%m-%d'))
+			ax.xaxis.set_major_formatter(DateFormatter('%d-%m'))
 
 		if curr_col_ind == 0:
 			ax.set_ylabel(ylabel, size=formatter['label_size'])
@@ -766,7 +766,7 @@ class PlotMeasurementFigures:
 	def generate_xaxis_ticks_datetime(self, df, last_day):
 		"""
 		This function return xlim and xticks for datetime plots:
-		If last_day==True, then the function return date_range of every hour.
+		If last_day==True, then the function return date_range of every second hour.
 		If last_day==False, function returns date_range based on the total length of the dataframe.
 		"""
 

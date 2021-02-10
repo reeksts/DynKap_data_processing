@@ -1,16 +1,24 @@
 import tkinter as tk
 from tkinter import ttk
+from modules.TestScript import PlottingOptions
 
 
 class MainApp(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title('Plot figures')
+        self.plotter = PlottingOptions()
+
 
         # Adding main frame
         self.main_frame = ttk.Frame(self, padding=10)
         self.main_frame.pack(side='top', fill='both', expand=True)
 
+
+
+
+
+        '''
         self.load_title = tk.Label(self.main_frame, text='Select files to merge')
         self.load_title.grid(row=0, column=0, sticky='w')
         self.load_button = tk.Button(self.main_frame, text='Load', command=self.load_files)
@@ -118,19 +126,7 @@ class MainApp(tk.Tk):
                                                          command=self.set_gradient_temperature)
         self.set_gradient_moisture_button.grid(row=21, column=1, sticky='e')
 
-
-
-    def load_files(self):
-        pass
-
-    def set_temperature_series_time(self):
-        pass
-
-    def set_moisture_series_time(self):
-        pass
-
-    def set_gradient_temperature(self):
-        pass
+        '''
 
 
 def main():
