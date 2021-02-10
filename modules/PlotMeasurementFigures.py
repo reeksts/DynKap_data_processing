@@ -34,15 +34,25 @@ class PlotMeasurementFigures:
 		self.direction_down = [['D1', 'D2', 'D3', 'D4', 'D5', 'D6'],
 							   ['MS9', 'MS10', 'MS11', 'MS12'],
 							   'Direction - down']
+		self.direction_names = {'direction_up': 'Direction - up',
+								'direction_right': 'Direction - right',
+								'direction_down': 'Direction - down'}
 		self.directions = [self.direction_up, self.direction_right, self.direction_down]
 		self.formatter = FigureFormatting()
 		self.add_hours_column_to_df()
+
+		self.temp_directions = [self.sample['sensors']['temp_up'],
+								self.sample['sensors']['temp_right'],
+								self.sample['sensors']['temp_down']]
+		self.moist_directions = [self.sample['sensors']['moist_up'],
+								 self.sample['sensors']['moist_right'],
+								 self.sample['sensors']['moist_down']]
 
 	def plot_all_measurements(self,
 							  folder,
 							  formatter,
 							  title=False,
-							  comsol_model=True,
+							  comsol_model=False,
 							  power_line=True,
 							  save_fig=True,
 							  show_fig=False,
@@ -50,60 +60,64 @@ class PlotMeasurementFigures:
 							  last_day=False):
 
 		# initializer:
-		fig, axes = plt.subplots(nrows=4, ncols=3, figsize=formatter['figsize'], sharey='row')
+		fig, ax = plt.subplots(nrows=4, ncols=3, figsize=formatter['figsize'], sharey='row')
 		plt.tight_layout()
 		fig.subplots_adjust(wspace=formatter['wspace'], hspace=formatter['hspace'])
-		max_col_ind = axes.shape[1]-1
-		max_row_ind = axes.shape[0]-1
+		max_col_ind = ax.shape[1]-1
+		max_row_ind = ax.shape[0]-1
 
 		# TEMPERATURE SERIES:
 		column = 0
-		for direction in self.directions:
+		for sensors in self.temp_directions:
 			curr_col_ind = column
 			curr_row_ind = max_row_ind
-			self.executor_temperature_series(axes[0, column],
-											 max_col_ind,
-											 curr_col_ind,
-											 max_row_ind,
-											 curr_row_ind,
-											 direction,
-											 formatter,
-											 title,
-											 power_line,
-											 xaxis_type,
-											 last_day)
+			self.executor_time_series(ax[0, column],
+									  max_col_ind,
+									  curr_col_ind,
+									  max_row_ind,
+									  curr_row_ind,
+									  sensors,
+									  formatter,
+									  title,
+									  power_line,
+									  xaxis_type,
+									  last_day,
+									  data_type='temperature')
 			column += 1
 
 		# TEMPERATURE GRADIENTS:
 		column = 0
-		for direction in self.directions:
+		for direction in self.temp_directions:
 			curr_col_ind = column
 			curr_row_ind = max_row_ind
-			self.executor_temperature_gradient(axes[1, column],
-											   max_col_ind,
-											   curr_col_ind,
-											   max_row_ind,
-											   curr_row_ind,
-											   direction,
-											   formatter,
-											   comsol_model)
+			self.executor_gradients(ax[1, column],
+									max_col_ind,
+									curr_col_ind,
+									max_row_ind,
+									curr_row_ind,
+									direction,
+									formatter,
+									comsol_model,
+									data_type='temperature')
 			column += 1
 
 		# MOISTURE SERIES:
 		column = 0
-		for direction in self.directions:
+		for sensors in self.moist_directions:
 			curr_col_ind = column
 			curr_row_ind = max_row_ind
-			self.executor_moisture_series(axes[2, column],
-										  max_col_ind,
-										  curr_col_ind,
-										  max_row_ind,
-										  curr_row_ind,
-										  direction,
-										  formatter,
-										  power_line,
-										  xaxis_type,
-										  last_day)
+			self.executor_time_series(ax[2, column],
+									  max_col_ind,
+									  curr_col_ind,
+									  max_row_ind,
+									  curr_row_ind,
+									  sensors,
+									  formatter,
+									  title,
+									  power_line,
+									  xaxis_type,
+									  last_day,
+									  data_type='moisture')
 			column += 1
 
 		# MOISTURE GRADIENTS:
@@ -111,13 +125,15 @@ class PlotMeasurementFigures:
 		for direction in self.directions:
 			curr_col_ind = column
 			curr_row_ind = max_row_ind
-			self.executor_moisture_gradient(axes[3, column],
-											max_col_ind,
-											curr_col_ind,
-											max_row_ind,
-											curr_row_ind,
-											direction,
-											formatter)
+			self.executor_gradients(ax[3, column],
+									max_col_ind,
+									curr_col_ind,
+									max_row_ind,
+									curr_row_ind,
+									direction,
+									formatter,
+									comsol_model,
+									data_type='moisture')
 			column += 1
 
 		# save show options:
@@ -144,15 +160,16 @@ class PlotMeasurementFigures:
 					  self.fignames['time series temp - down']]
 
 		# subversion configuration:
-		if xaxis_type == 'datetime' and last_day:
+		if xaxis_type == 'datetime' and not last_day:
 			savename_ext = '_with_datetime'
 		elif xaxis_type == 'datetime' and last_day:
 			savename_ext = '_last_24h'
 		else:
 			savename_ext = ''
 
+
 		counter = 0
-		for direction in self.directions:
+		for sensors in self.temp_directions:
 			# initializer:
 			fig, ax = plt.subplots(figsize=formatter['figsize'], sharex='col')
 			plt.tight_layout()
@@ -161,17 +178,18 @@ class PlotMeasurementFigures:
 			max_row_ind = 0
 			curr_row_ind = 0
 
-			self.executor_temperature_series(ax,
-											 max_col_ind,
-											 curr_col_ind,
-											 max_row_ind,
-											 curr_row_ind,
-											 direction,
-											 formatter,
-											 title,
-											 power_line,
-											 xaxis_type,
-											 last_day)
+			self.executor_time_series(ax,
+									  max_col_ind,
+									  curr_col_ind,
+									  max_row_ind,
+									  curr_row_ind,
+									  sensors,
+									  formatter,
+									  title,
+									  power_line,
+									  xaxis_type,
+									  last_day,
+									  data_type='temperature')
 
 			# save show options:
 			if save_fig:
@@ -187,7 +205,7 @@ class PlotMeasurementFigures:
 	def plot_temperature_gradient(self,
 								  folder,
 								  formatter,
-								  comsol_model=True,
+								  comsol_model=False,
 								  save_fig=True,
 								  show_fig=False):
 		save_names = [self.fignames['gradient temp - up'],
@@ -195,7 +213,7 @@ class PlotMeasurementFigures:
 					  self.fignames['gradient temp - down']]
 
 		counter = 0
-		for direction in self.directions:
+		for direction in self.temp_directions:
 			# initializer:
 			fig, ax = plt.subplots(figsize=formatter['figsize'])
 			plt.tight_layout()
@@ -204,14 +222,15 @@ class PlotMeasurementFigures:
 			max_row_ind = 0
 			curr_row_ind = 0
 
-			self.executor_temperature_gradient(ax,
-											   max_col_ind,
-											   curr_col_ind,
-											   max_row_ind,
-											   curr_row_ind,
-											   direction,
-											   formatter,
-											   comsol_model)
+			self.executor_gradients(ax,
+								    max_col_ind,
+									curr_col_ind,
+									max_row_ind,
+									curr_row_ind,
+									direction,
+									formatter,
+									comsol_model,
+									data_type='temperature')
 
 			# save show options:
 			if save_fig:
@@ -227,6 +246,7 @@ class PlotMeasurementFigures:
 	def plot_moisture_series(self,
 							 folder,
 							 formatter,
+							 title=False,
 							 power_line=True,
 							 save_fig=True,
 							 show_fig=False,
@@ -238,15 +258,15 @@ class PlotMeasurementFigures:
 					  self.fignames['time series moist - down']]
 
 		# subversion configuration:
-		if xaxis_type == 'datetime' and last_day == False:
+		if xaxis_type == 'datetime' and not last_day:
 			savename_ext = '_with_datetime'
-		elif xaxis_type == 'datetime' and last_day == True:
+		elif xaxis_type == 'datetime' and last_day:
 			savename_ext = '_last_24h'
 		else:
 			savename_ext = ''
 
 		counter = 0
-		for direction in self.directions:
+		for sensors in self.moist_directions:
 			# initializer:
 			fig, ax = plt.subplots(figsize=formatter['figsize'])
 			plt.tight_layout()
@@ -255,16 +275,18 @@ class PlotMeasurementFigures:
 			max_row_ind = 0
 			curr_row_ind = 0
 
-			self.executor_moisture_series(ax,
-										  max_col_ind,
-										  curr_col_ind,
-										  max_row_ind,
-										  curr_row_ind,
-										  direction,
-										  formatter,
-										  power_line,
-										  xaxis_type,
-										  last_day)
+			self.executor_time_series(ax,
+									  max_col_ind,
+									  curr_col_ind,
+									  max_row_ind,
+									  curr_row_ind,
+									  sensors,
+									  formatter,
+									  title,
+									  power_line,
+									  xaxis_type,
+									  last_day,
+									  data_type='moisture')
 
 			# save show options:
 			if save_fig:
@@ -280,6 +302,7 @@ class PlotMeasurementFigures:
 	def plot_moisture_gradient(self,
 							   folder,
 							   formatter,
+							   comsol_model=False,
 							   save_fig=True,
 							   show_fig=False):
 
@@ -288,7 +311,7 @@ class PlotMeasurementFigures:
 					  self.fignames['gradient moist - down']]
 
 		counter = 0
-		for direction in self.directions:
+		for direction in self.moist_directions:
 			# initializer:
 			fig, ax = plt.subplots(figsize=formatter['figsize'])
 			plt.tight_layout()
@@ -297,13 +320,15 @@ class PlotMeasurementFigures:
 			max_row_ind = 0
 			curr_row_ind = 0
 
-			self.executor_moisture_gradient(ax,
-											max_col_ind,
-											curr_col_ind,
-											max_row_ind,
-											curr_row_ind,
-											direction,
-											formatter)
+			self.executor_gradients(ax,
+								    max_col_ind,
+									curr_col_ind,
+									max_row_ind,
+									curr_row_ind,
+									direction,
+									formatter,
+									comsol_model,
+									data_type='moisture')
 
 			# save show options:
 			if save_fig:
@@ -329,9 +354,9 @@ class PlotMeasurementFigures:
 		save_name = self.fignames['time series temp']
 
 		# subversion configuration:
-		if xaxis_type == 'datetime' and last_day == False:
+		if xaxis_type == 'datetime' and not last_day:
 			savename_ext = '_with_datetime'
-		elif xaxis_type == 'datetime' and last_day == True:
+		elif xaxis_type == 'datetime' and last_day:
 			savename_ext = '_last_24h'
 		else:
 			savename_ext = ''
@@ -344,20 +369,21 @@ class PlotMeasurementFigures:
 		max_row_ind = len(ax) - 1
 
 		row = 0
-		for direction in self.directions:
+		for sensors in self.temp_directions:
 			curr_col_ind = 0
 			curr_row_ind = row
-			self.executor_temperature_series(ax[row],
-											 max_col_ind,
-											 curr_col_ind,
-											 max_row_ind,
-											 curr_row_ind,
-											 direction,
-											 formatter,
-											 title,
-											 power_line,
-											 xaxis_type,
-											 last_day)
+			self.executor_time_series(ax[row],
+									  max_col_ind,
+									  curr_col_ind,
+									  max_row_ind,
+									  curr_row_ind,
+									  sensors,
+									  formatter,
+									  title,
+									  power_line,
+									  xaxis_type,
+									  last_day,
+									  data_type='temperature')
 			row += 1
 
 		# save show options:
@@ -390,14 +416,15 @@ class PlotMeasurementFigures:
 		for direction in self.directions:
 			curr_col_ind = 0
 			curr_row_ind = row
-			self.executor_temperature_gradient(ax[row],
-											   max_col_ind,
-											   curr_col_ind,
-											   max_row_ind,
-											   curr_row_ind,
-											   direction,
-											   formatter,
-											   comsol_model)
+			self.executor_gradients(ax[row],
+									max_col_ind,
+									curr_col_ind,
+									max_row_ind,
+									curr_row_ind,
+									direction,
+									formatter,
+									comsol_model,
+									data_type='temperature')
 			row += 1
 
 		# save show options:
@@ -412,6 +439,7 @@ class PlotMeasurementFigures:
 	def plot_all_moisture_series(self,
 								 folder,
 								 formatter,
+								 title=False,
 								 power_line=True,
 								 save_fig=True,
 								 show_fig=False,
@@ -421,9 +449,9 @@ class PlotMeasurementFigures:
 		save_name = self.fignames['time series moist']
 
 		# subversion configuration:
-		if xaxis_type == 'datetime' and last_day == False:
+		if xaxis_type == 'datetime' and not last_day:
 			savename_ext = '_with_datetime'
-		elif xaxis_type == 'datetime' and last_day == True:
+		elif xaxis_type == 'datetime' and last_day:
 			savename_ext = '_last_24h'
 		else:
 			savename_ext = ''
@@ -436,19 +464,21 @@ class PlotMeasurementFigures:
 		max_row_ind = len(ax) - 1
 
 		row = 0
-		for direction in self.directions:
+		for sensors in self.moist_directions:
 			curr_col_ind = 0
 			curr_row_ind = row
-			self.executor_moisture_series(ax[row],
-										  max_col_ind,
-										  curr_col_ind,
-										  max_row_ind,
-										  curr_row_ind,
-										  direction,
-										  formatter,
-										  power_line,
-										  xaxis_type,
-										  last_day)
+			self.executor_time_series(ax[row],
+									  max_col_ind,
+									  curr_col_ind,
+									  max_row_ind,
+									  curr_row_ind,
+									  sensors,
+									  formatter,
+									  title,
+									  power_line,
+									  xaxis_type,
+									  last_day,
+									  data_type='moisture')
 			row += 1
 
 		# save show options:
@@ -463,6 +493,7 @@ class PlotMeasurementFigures:
 	def plot_all_moisture_gradients(self,
 									folder,
 									formatter,
+									comsol_model=False,
 									save_fig=True,
 									show_fig=False,):
 
@@ -479,13 +510,15 @@ class PlotMeasurementFigures:
 		for direction in self.directions:
 			curr_col_ind = 0
 			curr_row_ind = row
-			self.executor_moisture_gradient(ax[row],
-											max_col_ind,
-											curr_col_ind,
-											max_row_ind,
-											curr_row_ind,
-											direction,
-											formatter)
+			self.executor_gradients(ax[row],
+									max_col_ind,
+									curr_col_ind,
+									max_row_ind,
+									curr_row_ind,
+									direction,
+									formatter,
+									comsol_model,
+									data_type='moisture')
 			row += 1
 
 		# save show options:
@@ -497,20 +530,33 @@ class PlotMeasurementFigures:
 
 		plt.close()
 
-	def executor_temperature_series(self,
-									ax,
-									max_col_ind,
-									curr_col_ind,
-									max_row_ind,
-									curr_row_ind,
-									direction,
-									formatter,
-									title,
-									power_line,
-									xaxis_type,
-									last_day):
+	def executor_time_series(self,
+							 ax,
+							 max_col_ind,
+							 curr_col_ind,
+							 max_row_ind,
+							 curr_row_ind,
+							 sensors,
+							 formatter,
+							 title,
+							 power_line,
+							 xaxis_type,
+							 last_day,
+							 data_type):
+
+		# data type configuration:
+		if data_type == 'temperature':
+			yticks, ylim = self.generate_yaxis_ticks_temp_series()
+			ylabel = 'Temperature, °C'
+		elif data_type == 'moisture':
+			yticks, ylim = self.generate_yaxis_ticks_moist_series()
+			ylabel = 'Moisture, w%'
+		else:
+			ylim = []
+			yticks = []
+			ylabel = []
+
 		# ticks:
-		yticks_temp_ser, ylim_temp_ser = self.generate_yaxis_ticks_temp_series()
 		yticks_sec, ylim_sec = self.generate_yaxis_sec_ticks_series()
 
 		if last_day:
@@ -520,7 +566,7 @@ class PlotMeasurementFigures:
 
 		# plot data:
 		if xaxis_type == 'hours':
-			for sensor in direction[0]:
+			for sensor in sensors['sensors']:
 				ax.plot(df['hours'],
 						df[sensor],
 						label=sensor,
@@ -533,7 +579,7 @@ class PlotMeasurementFigures:
 			xticks, xlim = self.generate_xaxis_ticks_hours()
 
 		elif xaxis_type == 'datetime':
-			for sensor in direction[0]:
+			for sensor in sensors['sensors']:
 				ax.plot_date(df.index,
 							 df[sensor],
 							 label=sensor,
@@ -546,12 +592,12 @@ class PlotMeasurementFigures:
 			xticks, xlim = self.generate_xaxis_ticks_datetime(df, last_day)
 
 		else:
-			xlim = 0
-			xticks = 0
+			xlim = []
+			xticks = []
 
 		# configuration:
 		if title:
-			ax.set_title(direction[2])
+			ax.set_title(sensors['direction_name'])
 		legend = ax.legend(loc='lower right',
 						   fontsize=formatter['legend_size'],
 						   handlelength=formatter['legend_length'])
@@ -561,9 +607,9 @@ class PlotMeasurementFigures:
 
 		# power line on plots
 		if power_line:
-			ax2_temp_series = ax.twinx()
+			ax_twin = ax.twinx()
 			if xaxis_type == 'hours':
-				ax2_temp_series.plot(df['hours'],
+				ax_twin.plot(df['hours'],
 									 df['power'],
 									 label='power',
 									 lw=formatter['line_width'],
@@ -571,30 +617,30 @@ class PlotMeasurementFigures:
 									 marker=None,
 									 linestyle='solid')
 			elif xaxis_type == 'datetime':
-				ax2_temp_series.plot_date(df.index,
+				ax_twin.plot_date(df.index,
 										  df['power'],
 										  label='power',
 										  lw=formatter['line_width'],
 										  color='dimgrey',
 										  marker=None,
 										  linestyle='solid')
-			legend2 = ax2_temp_series.legend(loc='lower left',
-								   			 fontsize=formatter['legend_size'],
-								   			 handlelength=formatter['legend_length'])
+			legend2 = ax_twin.legend(loc='lower left',
+											 fontsize=formatter['legend_size'],
+											 handlelength=formatter['legend_length'])
 			legend2.get_frame().set_linewidth(formatter['legend_frame_width'])
 			legend2.get_frame().set_edgecolor(formatter['legend_edge_color'])
-			ax2_temp_series.add_artist(legend)
+			ax_twin.add_artist(legend)
 			if curr_col_ind == max_col_ind:
-				ax2_temp_series.set_ylabel('Power, W', size=formatter['label_size'])
-				ax2_temp_series.set_yticks(yticks_sec)
+				ax_twin.set_ylabel('Power, W', size=formatter['label_size'])
+				ax_twin.set_yticks(yticks_sec)
 			else:
-				ax2_temp_series.set_yticks([])
-			ax2_temp_series.set_ylim(ylim_sec)
-			ax2_temp_series.tick_params(direction='in', width=formatter['tick_width'],
+				ax_twin.set_yticks([])
+			ax_twin.set_ylim(ylim_sec)
+			ax_twin.tick_params(direction='in', width=formatter['tick_width'],
 										labelsize=formatter['tick_size'], length=formatter['tick_length'])
-			ax2_temp_series.yaxis.set_major_formatter(FormatStrFormatter('%.0f'))
+			ax_twin.yaxis.set_major_formatter(FormatStrFormatter('%.0f'))
 			for spine in ['top', 'bottom', 'left', 'right']:
-				ax2_temp_series.spines[spine].set_visible(False)
+				ax_twin.spines[spine].set_visible(False)
 			ax.tick_params(axis='both', direction='in', width=formatter['tick_width'], top=True,
 						   labelsize=formatter['tick_size'], length=formatter['tick_length'])
 
@@ -614,37 +660,47 @@ class PlotMeasurementFigures:
 			ax.xaxis.set_major_formatter(DateFormatter('%m-%d'))
 
 		if curr_col_ind == 0:
-			ax.set_ylabel('Temperature, °C', size=formatter['label_size'])
-		ax.set_ylim(ylim_temp_ser)
+			ax.set_ylabel(ylabel, size=formatter['label_size'])
+		ax.set_ylim(ylim)
+		ax.set_yticks(yticks)
 		for spine in ['top', 'bottom', 'left', 'right']:
 			ax.spines[spine].set_linewidth(formatter['spine_width'])
 		plt.setp(ax.get_xticklabels(), rotation=formatter['tick_rotation'], ha='right')
 		ax.yaxis.set_major_formatter(FormatStrFormatter('%.0f'))
 
-	def executor_temperature_gradient(self,
-									  ax,
-									  max_col_ind,
-									  curr_col_ind,
-									  max_row_ind,
-									  curr_row_ind,
-									  direction,
-									  formatter,
-									  comsol_model):
+	def executor_gradients(self,
+						   ax,
+						   max_col_ind,
+						   curr_col_ind,
+						   max_row_ind,
+					 	   curr_row_ind,
+						   direction,
+						   formatter,
+						   comsol_model,
+						   data_type):
+
 		core_temps = []
 		wall_temps = []
 		for timestamp in self.timestamps:
-			# precalculation:
-			core_temp = pd.Series(self.calculate_mean(timestamp[0], self.sample['core_sensors']).mean())
-			sensors_temp = self.calculate_mean(timestamp[0], direction[0])
-			wall_temp = pd.Series(self.calculate_mean(timestamp[0], self.sample['wall_sensors']).mean())
-			mean_temp_values = core_temp.append(sensors_temp)
-			mean_temp_values = mean_temp_values.append(wall_temp)
-			core_temps.append(core_temp.values)
-			wall_temps.append(wall_temp.values)
+			if data_type == 'temperature':
+				core_temp = pd.Series(self.calculate_mean(timestamp[0], self.sample['core_sensors']['sensors']).mean())
+				sensors_temp = self.calculate_mean(timestamp[0], direction['sensors'])
+				wall_temp = pd.Series(self.calculate_mean(timestamp[0], self.sample['wall_sensors']['sensors']).mean())
+				grad_values = core_temp.append(sensors_temp)
+				grad_values = grad_values.append(wall_temp)
+				core_temps.append(core_temp.values)
+				wall_temps.append(wall_temp.values)
+				sensor_loc = self.temp_sensor_loc
+			elif data_type == 'moisture':
+				grad_values = self.calculate_mean(timestamp[0], direction['sensors'])
+				sensor_loc = self.moist_sensor_loc
+			else:
+				grad_values = 0
+				sensor_loc = 0
 
 			# plot data:
-			ax.plot(self.temp_sensor_loc,
-					mean_temp_values,
+			ax.plot(sensor_loc,
+					grad_values,
 					label=timestamp[1],
 					linestyle='solid',
 					lw=formatter['line_width'],
@@ -653,8 +709,18 @@ class PlotMeasurementFigures:
 					mew=formatter['marker_edge_width'],
 					mfc=formatter['marker_face_color'])
 
-		# ticks
-		yticks_temp_grad, ylim_temp_grad = self.generate_yaxis_ticks_temp_gradient(core_temps, wall_temps)
+		# data type configuration:
+		if data_type == 'temperature':
+			yticks, ylim = self.generate_yaxis_ticks_temp_gradient(core_temps, wall_temps)
+			ylabel = 'Temperature, °C'
+		elif data_type == 'moisture':
+			yticks = [450, 500, 550]
+			ylim = [450, 550]
+			ylabel = 'Moisture, w%'
+		else:
+			yticks = 0
+			ylim = 0
+			ylabel = 0
 
 		# configuration:
 		legend = ax.legend(loc='lower right',
@@ -665,11 +731,11 @@ class PlotMeasurementFigures:
 		if curr_row_ind == max_row_ind:
 			ax.set_xlabel('Distance from core, cm', size=formatter['label_size'], labelpad=formatter['labelpad'])
 		if curr_col_ind == 0:
-			ax.set_ylabel('Temperature, °C', size=formatter['label_size'])
+			ax.set_ylabel(ylabel, size=formatter['label_size'])
 		ax.set_xlim([-1, 27])
 		ax.set_xticks(self.temp_sensor_loc)
-		ax.set_ylim(ylim_temp_grad)
-		ax.set_yticks(yticks_temp_grad)
+		ax.set_ylim(ylim)
+		ax.set_yticks(yticks)
 		ax.tick_params(axis='both', direction='in', width=formatter['tick_width'], right=True, top=True,
 					   labelsize=formatter['tick_size'], length=formatter['tick_length'])
 		for spine in ['top', 'bottom', 'left', 'right']:
@@ -688,175 +754,12 @@ class PlotMeasurementFigures:
 						linewidth=2,
 						color='dimgrey')
 
-	def executor_moisture_series(self,
-								 ax,
-								 max_col_ind,
-								 curr_col_ind,
-								 max_row_ind,
-								 curr_row_ind,
-								 direction,
-								 formatter,
-								 power_line,
-								 xaxis_type,
-								 last_day):
-		# ticks:
-		yticks_sec, ylim_sec = self.generate_yaxis_sec_ticks_series()
-		# y ticks should be genetrated here...
-		if last_day:
-			df = self.create_df_subset()
-		else:
-			df = self.df
-
-		# plot data:
-		if xaxis_type == 'hours':
-			for sensor in direction[1]:
-				ax.plot(df['hours'],
-						df[sensor],
-						label=sensor,
-						lw=formatter['line_width'],
-						marker=None,
-						linestyle='solid')
-			# configuration:
-			if curr_row_ind == max_row_ind:
-				ax.set_xlabel('Time, hours', size=formatter['label_size'], labelpad=formatter['labelpad'])
-			xticks, xlim = self.generate_xaxis_ticks_hours()
-
-		elif xaxis_type == 'datetime':
-			for sensor in direction[1]:
-				ax.plot(df.index,
-						df[sensor],
-						label=sensor,
-						lw=formatter['line_width'],
-						marker=None,
-						linestyle='solid')
-			# configuration:
-			if curr_row_ind == max_row_ind:
-				ax.set_xlabel('Time, daytime', size=formatter['label_size'], labelpad=formatter['labelpad'])
-			xticks, xlim = self.generate_xaxis_ticks_datetime(df, last_day)
-
-		else:
-			xlim = 0
-			xticks = 0
-
-		# configuration:
-		# should a title statement be added here??
-		legend = ax.legend(loc='lower right',
-						   fontsize=formatter['legend_size'],
-						   handlelength=formatter['legend_length'])
-		legend.get_frame().set_linewidth(formatter['legend_frame_width'])
-		legend.get_frame().set_edgecolor(formatter['legend_edge_color'])
-		legend.remove()
-
-		# power line on plots
-		if power_line:
-			ax2_moist_series = ax.twinx()
-			if xaxis_type == 'hours':
-				ax2_moist_series.plot(df['hours'],
-									  df['power'],
-									  label='power',
-									  lw=formatter['line_width'],
-									  color='dimgrey',
-									  marker=None,
-									  linestyle='solid')
-			elif xaxis_type == 'datetime':
-				ax2_moist_series.plot_date(df.index,
-										   df['power'],
-										   label='power',
-										   lw=formatter['line_width'],
-										   color='dimgrey',
-										   marker=None,
-										   linestyle='solid')
-			ax2_moist_series.legend(loc='lower left',
-									fontsize=formatter['legend_size'],
-									handlelength=formatter['legend_length'])
-			legend2 = ax2_moist_series.legend(loc='lower left',
-											  fontsize=formatter['legend_size'],
-											  handlelength=formatter['legend_length'])
-			legend2.get_frame().set_linewidth(formatter['legend_frame_width'])
-			legend2.get_frame().set_edgecolor(formatter['legend_edge_color'])
-			ax2_moist_series.add_artist(legend)
-			if curr_col_ind == max_col_ind:
-				ax2_moist_series.set_ylabel('Power, W', size=formatter['label_size'])
-				ax2_moist_series.set_yticks(yticks_sec)
-			else:
-				ax2_moist_series.set_yticks([])
-			ax2_moist_series.set_ylim(ylim_sec)
-			ax2_moist_series.tick_params(direction='in', width=formatter['tick_width'],
-										 labelsize=formatter['tick_size'], length=formatter['tick_length'])
-			ax2_moist_series.yaxis.set_major_formatter(FormatStrFormatter('%.0f'))
-			for spine in ['top', 'bottom', 'left', 'right']:
-				ax2_moist_series.spines[spine].set_visible(False)
-			ax.tick_params(axis='both', direction='in', width=formatter['tick_width'], top=True,
-						   labelsize=formatter['tick_size'], length=formatter['tick_length'])
-		else:
-			ax.add_artist(legend)
-			ax.tick_params(axis='both', direction='in', width=formatter['tick_width'], right=True, top=True,
-						   labelsize=formatter['tick_size'], length=formatter['tick_length'])
-
-		# configuration:
-		ax.set_xlim(xlim)
-		ax.set_xticks(xticks)
-		if xaxis_type == 'hours':
-			ax.xaxis.set_major_formatter(FormatStrFormatter('%.0f'))
-		elif xaxis_type == 'datetime' and last_day:
-			ax.xaxis.set_major_formatter(DateFormatter('%m-%d  %H:%M'))
-		else:
-			ax.xaxis.set_major_formatter(DateFormatter('%m-%d'))
-		if curr_col_ind == 0:
-			ax.set_ylabel('Moisture, w%', size=formatter['label_size'])
-		for spine in ['top', 'bottom', 'left', 'right']:
-			ax.spines[spine].set_linewidth(formatter['spine_width'])
-		plt.setp(ax.get_xticklabels(), rotation=formatter['tick_rotation'], ha='right')
-		ax.yaxis.set_major_formatter(FormatStrFormatter('%.1f'))
-
-	def executor_moisture_gradient(self,
-								   ax,
-								   max_col_ind,
-								   curr_col_ind,
-								   max_row_ind,
-								   curr_row_ind,
-								   direction,
-								   formatter):
-		for timestamp in self.timestamps:
-			# precalculation:
-			mean_moisture = self.calculate_mean(timestamp[0], direction[1])
-
-			# plot data:
-			ax.plot(self.moist_sensor_loc,
-					mean_moisture,
-					label=timestamp[1],
-					linestyle = 'solid',
-					lw=formatter['line_width'],
-					marker='o',
-					ms=formatter['marker_size'],
-					mew=formatter['marker_edge_width'],
-					mfc=formatter['marker_face_color'])
-
-		# configuration:
-		legend = ax.legend(loc='lower right',
-						   fontsize=formatter['legend_size'],
-						   handlelength=formatter['legend_length'])
-		legend.get_frame().set_linewidth(formatter['legend_frame_width'])
-		legend.get_frame().set_edgecolor(formatter['legend_edge_color'])
-		if curr_row_ind == max_row_ind:
-			ax.set_xlabel('Distance from core, cm', size=formatter['label_size'], labelpad=formatter['labelpad'])
-		if curr_col_ind == 0:
-			ax.set_ylabel('Moisture, w%', size=formatter['label_size'])
-		ax.set_xlim([-1, 27])
-		ax.set_xticks(self.temp_sensor_loc)
-		ax.tick_params(axis='both', direction='in', width=formatter['tick_width'], right=True, top=True,
-					   labelsize=formatter['tick_size'], length=formatter['tick_length'])
-		for spine in ['top', 'bottom', 'left', 'right']:
-			ax.spines[spine].set_linewidth(formatter['spine_width'])
-		ax.yaxis.set_major_formatter(FormatStrFormatter('%.1f'))
-		ax.xaxis.set_major_formatter(FormatStrFormatter('%.0f'))
-
-	def calculate_mean(self, timestamp, direction_sensors):
+	def calculate_mean(self, timestamp, sensors):
 		end_time = timestamp
 		time_delta = pd.Timedelta(30, unit='m')
 		start_time = end_time - time_delta
 		mask = (self.df.index >= start_time) & (self.df.index <= end_time)
-		mean_values = self.df[mask][direction_sensors].mean()
+		mean_values = self.df[mask][sensors].mean()
 
 		return mean_values
 
@@ -888,7 +791,7 @@ class PlotMeasurementFigures:
 		if last_day:
 			start_time = round_hour_down(df.index[0])
 			end_time = round_hour_up(df.index[-1])
-			periods = 26
+			periods = 13
 			freq = '2H'
 		else:
 			start_time = round_down(df.index[0])
@@ -1002,6 +905,11 @@ class PlotMeasurementFigures:
 		ylim = [0 - offset, max_val + offset]
 		yticks = np.arange(0, max_val + step, step)
 
+		return yticks, ylim
+
+	def generate_yaxis_ticks_moist_series(self):
+		yticks = [450, 500, 550]
+		ylim = [450, 550]
 		return yticks, ylim
 
 	def add_hours_column_to_df(self):
