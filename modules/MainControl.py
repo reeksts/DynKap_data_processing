@@ -164,7 +164,6 @@ class PlottingOptions:
         self.formatter = FigureFormatting()
 
     def all_combined_plot(self):
-        print('this line should executed')
         self.plot_figures.plot_all_measurements(folder=folders['01_combined_plots'],
                                                 formatter=formatter.std_paper_4x3_full_width)
 
@@ -175,7 +174,7 @@ class PlottingOptions:
                                                   formatter=formatter.std_paper_1x1_full_width,
                                                   xaxis_type='datetime')
 
-    def temperature_gradients_separate(self):
+    def temperature_gradient_separate(self):
         self.plot_figures.plot_temperature_gradient(folder=folders['04_gradient_temperature'],
                                                     formatter=formatter.std_paper_1x1_partial_width)
 
@@ -231,7 +230,7 @@ class PlottingOptions:
                                                    last_day=True)
 
     def plot_everything(self):
-        self.combined_plot()
+        self.all_combined_plot()
         self.temperature_series_separate()
         self.temperature_gradients_separate()
         self.moisture_series_separate()

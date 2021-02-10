@@ -70,13 +70,62 @@ class MainApp(tk.Tk):
                                                                    command=self.plotter.moisture_gradient_combined)
         self.plot_moisture_gradient_combined_button.grid(row=8, column=1, sticky='w', pady=(15, 0))
 
+        # Separate direction plot section
+        self.combined_plot_section_label = tk.Label(self.main_frame,
+                                                    text='Separate direction plots',
+                                                    font=('Arial', 12))
+        self.combined_plot_section_label.grid(row=9, column=0, columnspan=2, sticky='w', pady=(15, 0))
 
+        self.plot_temperature_series_separate_label = tk.Label(self.main_frame,
+                                                                text='Temperature series separate',
+                                                                font=('Ariel', 10))
+        self.plot_temperature_series_separate_label.grid(row=10, column=0, sticky='w', padx=(15, 0), pady=(15, 0))
+        self.plot_temperature_series_separate_button = tk.Button(self.main_frame,
+                                                                  text='Plot',
+                                                                  command=self.plotter.temperature_series_separate)
+        self.plot_temperature_series_separate_button.grid(row=10, column=1, sticky='w', pady=(15, 0))
 
+        self.plot_temperature_gradient_separate_label = tk.Label(self.main_frame,
+                                                                text='Temperature gradient separate',
+                                                               font=('Ariel', 10))
+        self.plot_temperature_gradient_separate_label.grid(row=11, column=0, sticky='w', padx=(15, 0), pady=(15, 0))
+        self.plot_temperature_gradient_separate_button = tk.Button(self.main_frame,
+                                                                  text='Plot',
+                                                                  command=self.plotter.temperature_gradient_separate)
+        self.plot_temperature_gradient_separate_button.grid(row=11, column=1, sticky='w', pady=(15, 0))
 
-        # Separate directioon plot section
+        self.plot_moisture_series_separate_label = tk.Label(self.main_frame,
+                                                               text='Moisture series separate',
+                                                               font=('Ariel', 10))
+        self.plot_moisture_series_separate_label.grid(row=12, column=0, sticky='w', padx=(15, 0), pady=(15, 0))
+        self.plot_moisture_series_separate_button = tk.Button(self.main_frame,
+                                                                 text='Plot',
+                                                                 command=self.plotter.moisture_series_separate)
+        self.plot_moisture_series_separate_button.grid(row=12, column=1, sticky='w', pady=(15, 0))
+
+        self.plot_moisture_gradient_separate_label = tk.Label(self.main_frame,
+                                                                 text='Moisture gradient separate',
+                                                                 font=('Ariel', 10))
+        self.plot_moisture_gradient_separate_label.grid(row=13, column=0, sticky='w', padx=(15, 0), pady=(15, 0))
+        self.plot_moisture_gradient_separate_button = tk.Button(self.main_frame,
+                                                                   text='Plot',
+                                                                   command=self.plotter.moisture_gradient_separate)
+        self.plot_moisture_gradient_separate_button.grid(row=13, column=1, sticky='w', pady=(15, 0))
 
         # Last day plot section
+        self.last_day_plot_section_label = tk.Label(self.main_frame,
+                                                    text='Last 24h plots',
+                                                    font=('Arial', 12))
+        self.last_day_plot_section_label.grid(row=14, column=0, columnspan=2, sticky='w', pady=(15, 0))
 
+        self.plot_all_last_24h_plots_label = tk.Label(self.main_frame,
+                                                               text='All last 24h plots',
+                                                               font=('Ariel', 10))
+        self.plot_all_last_24h_plots_label.grid(row=15, column=0, sticky='w', padx=(15, 0), pady=(15, 0))
+        self.plot_all_last_24h_plots_button = tk.Button(self.main_frame,
+                                                                 text='Plot',
+                                                                 command=self.plotter.last_24h_plots)
+        self.plot_all_last_24h_plots_button.grid(row=15, column=1, sticky='w', pady=(15, 0))
 
 def main():
     root = MainApp()
