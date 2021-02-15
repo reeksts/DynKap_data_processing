@@ -23,7 +23,7 @@ class PlotMeasurementFigures:
 		self.save_path = save_path
 		self.comsol_path = comsol_path
 		self.sample = sample
-		self.temp_sensor_loc = [0, 4, 8, 12, 16, 20, 24, 26]
+		self.temp_sensor_loc = [0.1, 4, 8, 12, 16, 20, 24, 26]
 		self.moist_sensor_loc = [4, 8, 12, 16]
 		self.direction_up = [['U1', 'U2', 'U3', 'U4', 'U5', 'U6'],
 							 ['MS1', 'MS2', 'MS3', 'MS4'],
@@ -51,6 +51,7 @@ class PlotMeasurementFigures:
 	def plot_all_measurements(self,
 							  folder,
 							  formatter,
+							  xscale,
 							  title=False,
 							  comsol_model=False,
 							  power_line=True,
@@ -97,6 +98,7 @@ class PlotMeasurementFigures:
 									curr_row_ind,
 									direction,
 									formatter,
+									xscale,
 									comsol_model,
 									data_type='temperature')
 			column += 1
@@ -132,6 +134,7 @@ class PlotMeasurementFigures:
 									curr_row_ind,
 									direction,
 									formatter,
+									xscale,
 									comsol_model,
 									data_type='moisture')
 			column += 1
@@ -205,6 +208,7 @@ class PlotMeasurementFigures:
 	def plot_temperature_gradient(self,
 								  folder,
 								  formatter,
+								  xscale,
 								  comsol_model=False,
 								  save_fig=True,
 								  show_fig=False):
@@ -229,6 +233,7 @@ class PlotMeasurementFigures:
 									curr_row_ind,
 									direction,
 									formatter,
+									xscale,
 									comsol_model,
 									data_type='temperature')
 
@@ -302,6 +307,7 @@ class PlotMeasurementFigures:
 	def plot_moisture_gradient(self,
 							   folder,
 							   formatter,
+							   xscale,
 							   comsol_model=False,
 							   save_fig=True,
 							   show_fig=False):
@@ -327,6 +333,7 @@ class PlotMeasurementFigures:
 									curr_row_ind,
 									direction,
 									formatter,
+									xscale,
 									comsol_model,
 									data_type='moisture')
 
@@ -399,6 +406,7 @@ class PlotMeasurementFigures:
 	def plot_all_temperature_gradients(self,
 									   folder,
 									   formatter,
+									   xscale,
 									   comsol_model=True,
 									   save_fig=True,
 									   show_fig=False):
@@ -423,6 +431,7 @@ class PlotMeasurementFigures:
 									curr_row_ind,
 									direction,
 									formatter,
+									xscale,
 									comsol_model,
 									data_type='temperature')
 			row += 1
@@ -493,6 +502,7 @@ class PlotMeasurementFigures:
 	def plot_all_moisture_gradients(self,
 									folder,
 									formatter,
+									xscale,
 									comsol_model=False,
 									save_fig=True,
 									show_fig=False,):
@@ -517,6 +527,7 @@ class PlotMeasurementFigures:
 									curr_row_ind,
 									direction,
 									formatter,
+									xscale,
 									comsol_model,
 									data_type='moisture')
 			row += 1
@@ -607,9 +618,12 @@ class PlotMeasurementFigures:
 
 		# power line on plots
 		if power_line:
-			ax_twin = ax.twinx()
+			# initializer:
+			ax_twinx = ax.twinx()
+
+			# plot data:
 			if xaxis_type == 'hours':
-				ax_twin.plot(df['hours'],
+				ax_twinx.plot(df['hours'],
 									 df['power'],
 									 label='power',
 									 lw=formatter['line_width'],
@@ -617,32 +631,37 @@ class PlotMeasurementFigures:
 									 marker=None,
 									 linestyle='solid')
 			elif xaxis_type == 'datetime':
-				ax_twin.plot_date(df.index,
+				ax_twinx.plot_date(df.index,
 										  df['power'],
 										  label='power',
 										  lw=formatter['line_width'],
 										  color='dimgrey',
 										  marker=None,
 										  linestyle='solid')
-			legend2 = ax_twin.legend(loc='lower left',
-											 fontsize=formatter['legend_size'],
-											 handlelength=formatter['legend_length'])
+
+			# legend:
+			legend2 = ax_twinx.legend(loc='lower left',
+									  fontsize=formatter['legend_size'],
+									  handlelength=formatter['legend_length'])
 			legend2.get_frame().set_linewidth(formatter['legend_frame_width'])
 			legend2.get_frame().set_edgecolor(formatter['legend_edge_color'])
-			ax_twin.add_artist(legend)
+			ax_twinx.add_artist(legend)
+
 			if curr_col_ind == max_col_ind:
-				ax_twin.set_ylabel('Power, W', size=formatter['label_size'])
-				ax_twin.set_yticks(yticks_sec)
+				ax_twinx.set_ylabel('Power, W', size=formatter['label_size'])
+				ax_twinx.set_yticks(yticks_sec)
 			else:
-				ax_twin.set_yticks([])
-			ax_twin.set_ylim(ylim_sec)
-			ax_twin.tick_params(direction='in', width=formatter['tick_width'],
-										labelsize=formatter['tick_size'], length=formatter['tick_length'])
-			ax_twin.yaxis.set_major_formatter(FormatStrFormatter('%.0f'))
-			for spine in ['top', 'bottom', 'left', 'right']:
-				ax_twin.spines[spine].set_visible(False)
+				ax_twinx.set_yticks([])
+			ax_twinx.set_ylim(ylim_sec)
+			ax_twinx.tick_params(direction='in', width=formatter['tick_width'],
+								 labelsize=formatter['tick_size'], length=formatter['tick_length'])
+			ax_twinx.yaxis.set_major_formatter(FormatStrFormatter('%.0f'))
 			ax.tick_params(axis='both', direction='in', width=formatter['tick_width'], top=True,
 						   labelsize=formatter['tick_size'], length=formatter['tick_length'])
+
+			# spines:
+			for spine in ['top', 'bottom', 'left', 'right']:
+				ax_twinx.spines[spine].set_visible(False)
 
 		else:
 			ax.add_artist(legend)
@@ -676,6 +695,7 @@ class PlotMeasurementFigures:
 					 	   curr_row_ind,
 						   direction,
 						   formatter,
+						   xscale,
 						   comsol_model,
 						   data_type):
 
@@ -732,8 +752,13 @@ class PlotMeasurementFigures:
 			ax.set_xlabel('Distance from core, cm', size=formatter['label_size'], labelpad=formatter['labelpad'])
 		if curr_col_ind == 0:
 			ax.set_ylabel(ylabel, size=formatter['label_size'])
-		ax.set_xlim([-1, 27])
-		ax.set_xticks(self.temp_sensor_loc)
+
+		if xscale == 'log':
+			ax.set_xscale(xscale)
+			ax.set_xlim([0.1, 27])
+		else:  						# this means xscale=='linear'
+			ax.set_xlim([1, 27])
+
 		ax.set_ylim(ylim)
 		ax.set_yticks(yticks)
 		ax.tick_params(axis='both', direction='in', width=formatter['tick_width'], right=True, top=True,

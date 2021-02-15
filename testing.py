@@ -1,17 +1,23 @@
-import matplotlib.pyplot as plt
+import pandas as pd
 import numpy as np
 
-inch=2.54
-fig, ax = plt.subplots(nrows=3, ncols=1, figsize=(16/inch, 10/inch))
-plt.tight_layout()
-for row in range(3):
-	ax[row].plot(np.arange(0, 10), np.random.random(10), c='b', lw=1)
-	ax[row].set_ylabel('Primary', size=6)
-	ax2 = ax[row].twinx()
-	ax2.plot(np.arange(0, 10), np.random.random(10), c='r', lw=1)
-	ax2.set_ylabel('Secondary', size=6)
-	ax[row].tick_params(axis='both', labelsize=6)
-	ax2.tick_params(labelsize=6)
 
-plt.savefig('figure', dpi=300, bbox_inches='tight')
 
+class DataProcessor:
+	def __init__(self, filename):
+		self.filename = filename
+		self.df = pd.read_csv(self.filename, names=['col1', 'col2'])
+		print(id(self.df))
+
+	def generate_main_df(self):
+		return self.df
+
+filename = 'test_df.csv'
+
+data_processor = DataProcessor(filename)
+df = data_processor.generate_main_df()
+
+
+df['col1'] = df['col1'].apply(lambda val: np.nan)
+
+print(df)

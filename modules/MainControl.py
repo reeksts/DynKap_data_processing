@@ -4,6 +4,7 @@ from tkinter import ttk
 from modules.SensorCorrection import SensorCorrection
 from modules.PlotMeasurementFigures import PlotMeasurementFigures
 from modules.PlotCalibrationFigures import PlotCalibrationFigures
+from modules.DataProcessor import DataProcessor
 from modules.SampleData import SampleData
 from modules.FigureFormatting import FigureFormatting
 
@@ -84,78 +85,9 @@ Options to select from:
 
 df.index = pd.to_datetime(df.index)
 
-plot_figures = PlotMeasurementFigures(df, timestamps, fignames, save_path, comsol_path, sample)
-
-def plot_all_figures():
-    # PLOT BASIC FIGURES
-    plot_figures.plot_all_measurements(folder=folders['01_combined_plots'],
-                                       formatter=formatter.std_paper_4x3_full_width)
-    plot_figures.plot_temperature_series(folder=folders['02_time_series_temperature'],
-                                         formatter=formatter.std_paper_1x1_full_width)
-    plot_figures.plot_temperature_gradient(folder=folders['04_gradient_temperature'],
-                                           formatter=formatter.std_paper_1x1_partial_width)
-    plot_figures.plot_moisture_series(folder=folders['03_time_series_moisture'],
-                                      formatter=formatter.std_paper_1x1_full_width)
-    plot_figures.plot_moisture_gradient(folder=folders['05_gradient_moisture'],
-                                        formatter=formatter.std_paper_1x1_partial_width)
-
-    # PLOT ADVANCED TIME SERIES
-    # plot time series with datetime axis:
-    plot_figures.plot_temperature_series(folder=folders['02_time_series_temperature'],
-                                         formatter=formatter.std_paper_1x1_full_width,
-                                         xaxis_type='datetime')
-    plot_figures.plot_moisture_series(folder=folders['03_time_series_moisture'],
-                                      formatter=formatter.std_paper_1x1_full_width,
-                                      xaxis_type='datetime')
-
-    # plot time series for the past 24h:
-    plot_figures.plot_temperature_series(folder=folders['06_last_24_hours'],
-                                         formatter=formatter.std_paper_1x1_full_width,
-                                         xaxis_type='datetime',
-                                         last_day=True)
-    plot_figures.plot_moisture_series(folder=folders['06_last_24_hours'],
-                                      formatter=formatter.std_paper_1x1_full_width,
-                                      xaxis_type='datetime',
-                                      last_day=True)
-
-    # PLOT 3 in 1 FIGURES:
-    # temperature series:
-    plot_figures.plot_all_temperature_series(folder=folders['01_combined_plots'],
-                                             formatter=formatter.std_paper_3x1_full_width)
-    plot_figures.plot_all_temperature_series(folder=folders['01_combined_plots'],
-                                             formatter=formatter.std_paper_3x1_full_width,
-                                             xaxis_type='datetime')
-    plot_figures.plot_all_temperature_series(folder=folders['06_last_24_hours'],
-                                             formatter=formatter.std_paper_3x1_full_width,
-                                             xaxis_type='datetime',
-                                             last_day=True)
-
-    # temperature gradient:
-    plot_figures.plot_all_temperature_gradients(folder=folders['01_combined_plots'],
-                                                formatter=formatter.std_paper_3x1_partial_width)
-
-    # moisture series:
-    plot_figures.plot_all_moisture_series(folder=folders['01_combined_plots'],
-                                          formatter=formatter.std_paper_3x1_full_width)
-    plot_figures.plot_all_moisture_series(folder=folders['01_combined_plots'],
-                                          formatter=formatter.std_paper_3x1_full_width,
-                                          xaxis_type='datetime')
-    plot_figures.plot_all_moisture_series(folder=folders['06_last_24_hours'],
-                                          formatter=formatter.std_paper_3x1_full_width,
-                                          xaxis_type='datetime',
-                                          last_day=True)
-
-    # moisture gradient:
-    plot_figures.plot_moisture_gradient(folder=folders['05_gradient_moisture'],
-                                        formatter=formatter.std_paper_1x1_partial_width)
-
-#plot_all_figures()
-
-def plot_development():
-    plot_figures.plot_moisture_gradient(folder=folders['05_gradient_moisture'],
-                                        formatter=formatter.std_paper_1x1_partial_width)
-
-#plot_development()
+# Execute data deletion (this deletes flawed data)
+data_processor = DataProcessor(sample)
+data_processor.delete_flawed_data(df)
 
 
 class PlottingOptions:
@@ -163,9 +95,10 @@ class PlottingOptions:
         self.plot_figures = PlotMeasurementFigures(df, timestamps, fignames, save_path, comsol_path, sample)
         self.formatter = FigureFormatting()
 
-    def all_combined_plot(self):
+    def all_combined_plot(self, xscale):
         self.plot_figures.plot_all_measurements(folder=folders['01_combined_plots'],
-                                                formatter=formatter.std_paper_4x3_full_width)
+                                                formatter=formatter.std_paper_4x3_full_width,
+                                                xscale=xscale)
 
     def temperature_series_separate(self):
         self.plot_figures.plot_temperature_series(folder=folders['02_time_series_temperature'],
@@ -174,9 +107,10 @@ class PlottingOptions:
                                                   formatter=formatter.std_paper_1x1_full_width,
                                                   xaxis_type='datetime')
 
-    def temperature_gradient_separate(self):
+    def temperature_gradient_separate(self, xscale):
         self.plot_figures.plot_temperature_gradient(folder=folders['04_gradient_temperature'],
-                                                    formatter=formatter.std_paper_1x1_partial_width)
+                                                    formatter=formatter.std_paper_1x1_partial_width,
+                                                    xscale=xscale)
 
     def moisture_series_separate(self):
         self.plot_figures.plot_moisture_series(folder=folders['03_time_series_moisture'],
@@ -185,9 +119,10 @@ class PlottingOptions:
                                                formatter=formatter.std_paper_1x1_full_width,
                                                xaxis_type='datetime')
 
-    def moisture_gradient_separate(self):
+    def moisture_gradient_separate(self, xscale):
         self.plot_figures.plot_moisture_gradient(folder=folders['05_gradient_moisture'],
-                                            formatter=formatter.std_paper_1x1_partial_width)
+                                            formatter=formatter.std_paper_1x1_partial_width,
+                                                 xscale=xscale)
 
     def temperature_series_combined(self):
         self.plot_figures.plot_all_temperature_series(folder=folders['01_combined_plots'],
@@ -196,9 +131,10 @@ class PlottingOptions:
                                                       formatter=formatter.std_paper_3x1_full_width,
                                                       xaxis_type='datetime')
 
-    def temperature_gradient_combined(self):
+    def temperature_gradient_combined(self, xscale):
         self.plot_figures.plot_all_temperature_gradients(folder=folders['01_combined_plots'],
-                                                        formatter=formatter.std_paper_3x1_partial_width)
+                                                         formatter=formatter.std_paper_3x1_partial_width,
+                                                         xscale=xscale)
 
     def moisture_series_combined(self):
         self.plot_figures.plot_all_moisture_series(folder=folders['01_combined_plots'],
@@ -207,9 +143,10 @@ class PlottingOptions:
                                                    formatter=formatter.std_paper_3x1_full_width,
                                                    xaxis_type='datetime')
 
-    def moisture_gradient_combined(self):
-        self.plot_figures.plot_moisture_gradient(folder=folders['05_gradient_moisture'],
-                                            formatter=formatter.std_paper_1x1_partial_width)
+    def moisture_gradient_combined(self, xscale):
+        self.plot_figures.plot_all_moisture_gradients(folder=folders['01_combined_plots'],
+                                                      formatter=formatter.std_paper_3x1_partial_width,
+                                                      xscale=xscale)
 
     def last_24h_plots(self):
         self.plot_figures.plot_temperature_series(folder=folders['06_last_24_hours'],
@@ -229,16 +166,16 @@ class PlottingOptions:
                                                    xaxis_type='datetime',
                                                    last_day=True)
 
-    def plot_everything(self):
-        self.all_combined_plot()
+    def plot_everything(self, xscale):
+        self.all_combined_plot(xscale)
         self.temperature_series_separate()
-        self.temperature_gradients_separate()
+        self.temperature_gradient_separate(xscale)
         self.moisture_series_separate()
-        self.moisture_gradient_separate()
+        self.moisture_gradient_separate(xscale)
         self.temperature_series_combined()
-        self.temperature_gradient_combined()
+        self.temperature_gradient_combined(xscale)
         self.moisture_series_combined()
-        self.moisture_gradient_combined()
+        self.moisture_gradient_combined(xscale)
         self.last_24h_plots()
 
 

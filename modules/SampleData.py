@@ -39,7 +39,8 @@ class SampleData:
 					'timestamps': [[pd.Timestamp(2021, 1, 19, 14, 30), '154W core'],
 								   [pd.Timestamp(2021, 1, 26, 8, 00), '174W core'],
 								   [pd.Timestamp(2021, 2, 1, 8, 00), '194W core'],
-								   [pd.Timestamp(2021, 2, 5, 8, 00), '214W core']],
+								   [pd.Timestamp(2021, 2, 5, 8, 00), '214W core'],
+								   [pd.Timestamp(2021, 2, 15, 8, 00), '288W core']],
 					'periods': [{'start': 'timestamp', 'end': 'timestamp', 'name': 'name'},
 								{'start': 'timestamp', 'end': 'timestamp', 'name': 'name'},
 								{'start': 'timestamp', 'end': 'timestamp', 'name': 'name'},
@@ -67,4 +68,6 @@ class SampleData:
 								'moist_down': {'sensors': ['MS9', 'MS10', 'MS11', 'MS12'],
 											'locations': [4, 8, 12, 16],
 											'direction_name': 'Direction - up'}},
-					'del_data': [{'sensor': 'R1', 'start': '', 'end': ''}]}
+					'del_data': [{'sensor': 'R1',
+								  'start': pd.Timestamp(2021, 2, 6, 12, 40),
+								  'end': pd.Timestamp(2021, 2, 8, 17, 40)}]}

@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from modules.MainControl import PlottingOptions
 
+
 class MainApp(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -22,7 +23,10 @@ class MainApp(tk.Tk):
 
         self.plot_all_label = tk.Label(self.main_frame, text='Plot all:', font=('Arial', 10))
         self.plot_all_label.grid(row=2, column=0, sticky='w', pady=(15, 0))
-        self.plot_all_button = tk.Button(self.main_frame, text='Plot', command=self.plotter.plot_everything)
+        self.plot_all_button = tk.Button(
+            self.main_frame,
+            text='Plot',
+            command=lambda: self.plotter.plot_everything(self.xscale_var.get()))
         self.plot_all_button.grid(row=2, column=1)
 
         # Main combined plot section
@@ -31,7 +35,10 @@ class MainApp(tk.Tk):
 
         self.plot_all_combined_label = tk.Label(self.main_frame, text='Combined plot:', font=('Arial', 10))
         self.plot_all_combined_label.grid(row=4, column=0, sticky='w', padx=(15, 0), pady=(15, 0))
-        self.plot_all_combined_button = tk.Button(self.main_frame, text='Plot', command=self.plotter.all_combined_plot)
+        self.plot_all_combined_button = tk.Button(
+            self.main_frame,
+            text='Plot',
+            command=lambda: self.plotter.all_combined_plot(self.xscale_var.get()))
         self.plot_all_combined_button.grid(row=4, column=1, sticky='w', pady=(15, 0))
 
         self.plot_temperature_series_combined_label = tk.Label(self.main_frame,
@@ -44,30 +51,32 @@ class MainApp(tk.Tk):
         self.plot_temperature_series_combined_button.grid(row=5, column=1, sticky='w', pady=(15, 0))
 
         self.plot_temperature_gradient_combined_label = tk.Label(self.main_frame,
-                                                               text='Temperature gradient combined',
-                                                               font=('Arial', 10))
+                                                                 text='Temperature gradient combined',
+                                                                 font=('Arial', 10))
         self.plot_temperature_gradient_combined_label.grid(row=6, column=0, sticky='w', padx=(15, 0), pady=(15, 0))
-        self.plot_temperature_gradient_combined_button = tk.Button(self.main_frame,
-                                                                 text='Plot',
-                                                                 command=self.plotter.temperature_gradient_combined)
+        self.plot_temperature_gradient_combined_button = tk.Button(
+            self.main_frame,
+            text='Plot',
+            command=lambda: self.plotter.temperature_gradient_combined(self.xscale_var.get()))
         self.plot_temperature_gradient_combined_button.grid(row=6, column=1, sticky='w', pady=(15, 0))
 
         self.plot_moisture_series_combined_label = tk.Label(self.main_frame,
-                                                               text='Moisture series combined',
-                                                               font=('Arial', 10))
+                                                            text='Moisture series combined',
+                                                            font=('Arial', 10))
         self.plot_moisture_series_combined_label.grid(row=7, column=0, sticky='w', padx=(15, 0), pady=(15, 0))
         self.plot_moisture_series_combined_button = tk.Button(self.main_frame,
-                                                                 text='Plot',
-                                                                 command=self.plotter.moisture_series_combined)
+                                                              text='Plot',
+                                                              command=self.plotter.moisture_series_combined)
         self.plot_moisture_series_combined_button.grid(row=7, column=1, sticky='w', pady=(15, 0))
 
         self.plot_moisture_gradient_combined_label = tk.Label(self.main_frame,
-                                                                 text='Moisture gradient combined',
-                                                                 font=('Arial', 10))
+                                                              text='Moisture gradient combined',
+                                                              font=('Arial', 10))
         self.plot_moisture_gradient_combined_label.grid(row=8, column=0, sticky='w', padx=(15, 0), pady=(15, 0))
-        self.plot_moisture_gradient_combined_button = tk.Button(self.main_frame,
-                                                                   text='Plot',
-                                                                   command=self.plotter.moisture_gradient_combined)
+        self.plot_moisture_gradient_combined_button = tk.Button(
+            self.main_frame,
+            text='Plot',
+            command=lambda: self.plotter.moisture_gradient_combined(self.xscale_var.get()))
         self.plot_moisture_gradient_combined_button.grid(row=8, column=1, sticky='w', pady=(15, 0))
 
         # Separate direction plot section
@@ -77,21 +86,22 @@ class MainApp(tk.Tk):
         self.combined_plot_section_label.grid(row=9, column=0, columnspan=2, sticky='w', pady=(15, 0))
 
         self.plot_temperature_series_separate_label = tk.Label(self.main_frame,
-                                                                text='Temperature series separate',
-                                                                font=('Ariel', 10))
+                                                               text='Temperature series separate',
+                                                               font=('Ariel', 10))
         self.plot_temperature_series_separate_label.grid(row=10, column=0, sticky='w', padx=(15, 0), pady=(15, 0))
         self.plot_temperature_series_separate_button = tk.Button(self.main_frame,
-                                                                  text='Plot',
-                                                                  command=self.plotter.temperature_series_separate)
+                                                                 text='Plot',
+                                                                 command=self.plotter.temperature_series_separate)
         self.plot_temperature_series_separate_button.grid(row=10, column=1, sticky='w', pady=(15, 0))
 
         self.plot_temperature_gradient_separate_label = tk.Label(self.main_frame,
                                                                 text='Temperature gradient separate',
                                                                font=('Ariel', 10))
         self.plot_temperature_gradient_separate_label.grid(row=11, column=0, sticky='w', padx=(15, 0), pady=(15, 0))
-        self.plot_temperature_gradient_separate_button = tk.Button(self.main_frame,
-                                                                  text='Plot',
-                                                                  command=self.plotter.temperature_gradient_separate)
+        self.plot_temperature_gradient_separate_button = tk.Button(
+            self.main_frame,
+            text='Plot',
+            command=lambda: self.plotter.temperature_gradient_separate(self.xscale_var.get()))
         self.plot_temperature_gradient_separate_button.grid(row=11, column=1, sticky='w', pady=(15, 0))
 
         self.plot_moisture_series_separate_label = tk.Label(self.main_frame,
@@ -107,9 +117,10 @@ class MainApp(tk.Tk):
                                                                  text='Moisture gradient separate',
                                                                  font=('Ariel', 10))
         self.plot_moisture_gradient_separate_label.grid(row=13, column=0, sticky='w', padx=(15, 0), pady=(15, 0))
-        self.plot_moisture_gradient_separate_button = tk.Button(self.main_frame,
-                                                                   text='Plot',
-                                                                   command=self.plotter.moisture_gradient_separate)
+        self.plot_moisture_gradient_separate_button = tk.Button(
+            self.main_frame,
+            text='Plot',
+            command=lambda: self.plotter.moisture_gradient_separate(self.xscale_var.get()))
         self.plot_moisture_gradient_separate_button.grid(row=13, column=1, sticky='w', pady=(15, 0))
 
         # Last day plot section
@@ -126,6 +137,15 @@ class MainApp(tk.Tk):
                                                                  text='Plot',
                                                                  command=self.plotter.last_24h_plots)
         self.plot_all_last_24h_plots_button.grid(row=15, column=1, sticky='w', pady=(15, 0))
+
+        # Options for xscale:
+        self.xscale_label = tk.Label(self.main_frame, text='Set xscale', font=('Arial', 12))
+        self.xscale_label.grid(row=16, column=0, columnspan=2, sticky='w', pady=(30, 0))
+        self.xscale_var = tk.StringVar(value='linear')
+        self.r1 = tk.Radiobutton(self.main_frame, text='linear', variable=self.xscale_var, value='linear')
+        self.r1.grid(row=17, column=0)
+        self.r2 = tk.Radiobutton(self.main_frame, text='log', variable=self.xscale_var, value='log')
+        self.r2.grid(row=18, column=0)
 
 def main():
     root = MainApp()
