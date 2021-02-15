@@ -9,6 +9,8 @@
       <w>ggplot</w>
       <w>hspace</w>
       <w>labelpad</w>
+      <w>ncols</w>
+      <w>nrows</w>
       <w>precalculation</w>
       <w>rounddown</w>
       <w>savename</w>

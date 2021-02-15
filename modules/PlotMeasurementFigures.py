@@ -25,20 +25,6 @@ class PlotMeasurementFigures:
 		self.sample = sample
 		self.temp_sensor_loc = [0.1, 4, 8, 12, 16, 20, 24, 26]
 		self.moist_sensor_loc = [4, 8, 12, 16]
-		self.direction_up = [['U1', 'U2', 'U3', 'U4', 'U5', 'U6'],
-							 ['MS1', 'MS2', 'MS3', 'MS4'],
-							 'Direction - up']
-		self.direction_right = [['R1', 'R2', 'R3', 'R4', 'R5', 'R6'],
-								['MS5', 'MS6', 'MS7', 'MS8'],
-								'Direction - right']
-		self.direction_down = [['D1', 'D2', 'D3', 'D4', 'D5', 'D6'],
-							   ['MS9', 'MS10', 'MS11', 'MS12'],
-							   'Direction - down']
-		self.direction_names = {'direction_up': 'Direction - up',
-								'direction_right': 'Direction - right',
-								'direction_down': 'Direction - down'}
-		self.directions = [self.direction_up, self.direction_right, self.direction_down]
-		self.formatter = FigureFormatting()
 		self.add_hours_column_to_df()
 
 		self.temp_directions = [self.sample['sensors']['temp_up'],
@@ -47,6 +33,29 @@ class PlotMeasurementFigures:
 		self.moist_directions = [self.sample['sensors']['moist_up'],
 								 self.sample['sensors']['moist_right'],
 								 self.sample['sensors']['moist_down']]
+
+	def plot_all_measurements2(self,
+							   nrows,
+							   ncols,
+							   data,
+							   ptype):
+
+		# data could maybe be:
+		# temp_ser
+		# temp_grad
+		# moist_ser
+		# moist_grad
+
+		# plot type:
+		# single
+		# multi
+
+		# initializer:
+		fig, ax = plt.subplots(nrows=nrows, ncols=ncols,)
+
+		for row in nrows:
+			for column in ncols:
+
 
 	def plot_all_measurements(self,
 							  folder,
