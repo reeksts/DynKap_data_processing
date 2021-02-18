@@ -147,6 +147,21 @@ class MainApp(tk.Tk):
         self.r2 = tk.Radiobutton(self.main_frame, text='log', variable=self.xscale_var, value='log')
         self.r2.grid(row=18, column=0)
 
+        # Special plots with comsol solution
+        self.special_plots_section_with_comsol_label = tk.Label(self.main_frame,
+                                                    text='Special comsol plots',
+                                                    font=('Arial', 12))
+        self.special_plots_section_with_comsol_label.grid(row=19, column=0, columnspan=2, sticky='w', pady=(15, 0))
+        self.plot_special_comsol_gradient_label = tk.Label(self.main_frame,
+                                                      text='Comsol gradient',
+                                                      font=('Ariel', 10))
+        self.plot_special_comsol_gradient_label.grid(row=20, column=0, sticky='w', padx=(15, 0), pady=(15, 0))
+        self.plot_special_comsol_gradient_button = tk.Button(
+            self.main_frame,
+            text='Plot',
+            command=lambda: self.plotter.plot_special_comsol_solution_plots(self.xscale_var.get()))
+        self.plot_special_comsol_gradient_button.grid(row=20, column=1, sticky='w', pady=(15, 0))
+
 def main():
     root = MainApp()
     #style = ttk.Style()

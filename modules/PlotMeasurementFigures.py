@@ -26,6 +26,8 @@ class PlotMeasurementFigures:
 		self.temp_sensor_loc = [0.1, 4, 8, 12, 16, 20, 24, 26]
 		self.moist_sensor_loc = [4, 8, 12, 16]
 		self.add_hours_column_to_df()
+		self.add_wall_temp_column()
+		self.add_core_temp_column()
 
 		self.temp_directions = [self.sample['sensors']['temp_up'],
 								self.sample['sensors']['temp_right'],
@@ -34,27 +36,86 @@ class PlotMeasurementFigures:
 								 self.sample['sensors']['moist_right'],
 								 self.sample['sensors']['moist_down']]
 
+		self.temp_ser = [self.sample['sensors']['moist_up'],
+						 self.sample['sensors']['moist_right'],
+						 self.sample['sensors']['moist_down']]
+		self.temp_grad = [self.sample['sensors']['moist_up'],
+						  self.sample['sensors']['moist_right'],
+						  self.sample['sensors']['moist_down']]
+		self.moist_ser = [self.sample['sensors']['moist_up'],
+						  self.sample['sensors']['moist_right'],
+						  self.sample['sensors']['moist_down']]
+		self.moist_grad = [self.sample['sensors']['moist_up'],
+						   self.sample['sensors']['moist_right'],
+						   self.sample['sensors']['moist_down']]
+
+		self.data = [[self.temp_ser, 'series'],
+					 [self.temp_grad, 'gradient'],
+					 [self.moist_ser, 'series'],
+					 [self.moist_grad, 'gradient']]
+
 	def plot_all_measurements2(self,
 							   nrows,
 							   ncols,
 							   data,
 							   ptype):
+		pass
 
+
+		'''
 		# data could maybe be:
 		# temp_ser
 		# temp_grad
 		# moist_ser
 		# moist_grad
 
+		# [temp_ser, temp_grad, moist_ser, moist_grad]
+
 		# plot type:
 		# single
 		# multi
 
+		if ptype == 'single':
+			for direction in self.temp_directions:
+				pass
+
+		if ptype == 'multi':
+
+
 		# initializer:
 		fig, ax = plt.subplots(nrows=nrows, ncols=ncols,)
 
-		for row in nrows:
-			for column in ncols:
+		max_col_ind = ncols
+		max_row_ind = nrows
+
+
+		counter = 0
+		for row in range(nrows):
+			curr_row_ind = row
+			directions = self.data[row][0]
+			dtype = self.data[row][1]
+			dir_count = 0
+			for column in range(ncols):
+				curr_col_ind = column
+			for direction in directions:
+				if dtype == 'series':
+					self.executor_time_series(ax[row, column],
+											  max_col_ind,
+											  curr_col_ind,
+											  max_row_ind,
+											  curr_row_ind,
+											  direction,
+											  formatter,
+											  title,
+											  power_line,
+											  xaxis_type,
+											  last_day,
+											  data_type='temperature')
+
+
+
+			counter
+		'''
 
 
 	def plot_all_measurements(self,
@@ -257,6 +318,51 @@ class PlotMeasurementFigures:
 
 			plt.close()
 
+	def plot_temperature_gradient_with_comsol(self,
+								  		      folder,
+								 			  formatter,
+								  			  xscale,
+											  comsol_dfs,
+								  			  comsol_model=False,
+								 			  save_fig=True,
+								              show_fig=False):
+		save_names = [self.fignames['gradient temp - up'],
+					  self.fignames['gradient temp - right'],
+					  self.fignames['gradient temp - down']]
+
+		counter = 0
+		for direction in self.temp_directions:
+			# initializer:
+			fig, ax = plt.subplots(figsize=formatter['figsize'])
+			plt.tight_layout()
+			max_col_ind = 0
+			curr_col_ind = 0
+			max_row_ind = 0
+			curr_row_ind = 0
+
+			self.executor_gradients_with_comsol(ax,
+								    			max_col_ind,
+												curr_col_ind,
+												max_row_ind,
+												curr_row_ind,
+												direction,
+												formatter,
+												xscale,
+												comsol_dfs,
+												comsol_model,
+												data_type='temperature')
+
+			# save show options:
+			if save_fig:
+				fig.savefig(self.save_path + folder + save_names[counter] + 'with_comsol', dpi=300, bbox_inches='tight')
+
+			if show_fig:
+				plt.show()
+
+			counter += 1
+
+			plt.close()
+
 	def plot_moisture_series(self,
 							 folder,
 							 formatter,
@@ -416,7 +522,7 @@ class PlotMeasurementFigures:
 									   folder,
 									   formatter,
 									   xscale,
-									   comsol_model=True,
+									   comsol_model=False,
 									   save_fig=True,
 									   show_fig=False):
 
@@ -615,6 +721,36 @@ class PlotMeasurementFigures:
 			xlim = []
 			xticks = []
 
+		# plot core and wall temperature if plotting temperature series
+		if data_type == 'temperature':
+			if xaxis_type == 'hours':
+				ax.plot(df['hours'],
+						df['wall'],
+						label='wall',
+						lw=1.5,
+						color='black',
+						linestyle='dashed')
+				ax.plot(df['hours'],
+						df['core'],
+						label='core',
+						lw=1.5,
+						color='black',
+						linestyle='dotted')
+			if xaxis_type == 'datetime':
+				ax.plot(df.index,
+						df['wall'],
+						label='wall',
+						lw=1.5,
+						color='black',
+						linestyle='dashed')
+				ax.plot(df.index,
+						df['core'],
+						label='core',
+						lw=1.5,
+						color='black',
+						linestyle='dotted')
+
+
 		# configuration:
 		if title:
 			ax.set_title(sensors['direction_name'])
@@ -766,6 +902,102 @@ class PlotMeasurementFigures:
 			ax.set_xscale(xscale)
 			ax.set_xlim([0.1, 27])
 		else:  						# this means xscale=='linear'
+			ax.set_xlim([-1, 27])
+
+		ax.set_ylim(ylim)
+		ax.set_yticks(yticks)
+		ax.tick_params(axis='both', direction='in', width=formatter['tick_width'], right=True, top=True,
+					   labelsize=formatter['tick_size'], length=formatter['tick_length'])
+		for spine in ['top', 'bottom', 'left', 'right']:
+			ax.spines[spine].set_linewidth(formatter['spine_width'])
+		ax.yaxis.set_major_formatter(FormatStrFormatter('%.0f'))
+		ax.xaxis.set_major_formatter(FormatStrFormatter('%.0f'))
+
+		# comsol model data:
+		if comsol_model:
+			model = ComsolModel(self.comsol_path)
+			for model in model.comsol_models_dfs:
+				ax.plot(model['loc'],
+						model['temp'],
+						lw=formatter['line_width'],
+						linestyle='--',
+						color='dimgrey')
+
+	def executor_gradients_with_comsol(self,
+						   			   ax,
+						   			   max_col_ind,
+								       curr_col_ind,
+								   	   max_row_ind,
+								       curr_row_ind,
+								       direction,
+								       formatter,
+								       xscale,
+									   comsol_dfs,
+									   comsol_model,
+									   data_type):
+
+		core_temps = []
+		wall_temps = []
+		for timestamp in self.timestamps:
+			if data_type == 'temperature':
+				core_temp = pd.Series(self.calculate_mean(timestamp[0], self.sample['core_sensors']['sensors']).mean())
+				sensors_temp = self.calculate_mean(timestamp[0], direction['sensors'])
+				wall_temp = pd.Series(self.calculate_mean(timestamp[0], self.sample['wall_sensors']['sensors']).mean())
+				grad_values = core_temp.append(sensors_temp)
+				grad_values = grad_values.append(wall_temp)
+				core_temps.append(core_temp.values)
+				wall_temps.append(wall_temp.values)
+				sensor_loc = self.temp_sensor_loc
+			elif data_type == 'moisture':
+				grad_values = self.calculate_mean(timestamp[0], direction['sensors'])
+				sensor_loc = self.moist_sensor_loc
+			else:
+				grad_values = 0
+				sensor_loc = 0
+
+			# plot data:
+			ax.plot(sensor_loc,
+					grad_values,
+					label=timestamp[1],
+					linestyle='solid',
+					lw=formatter['line_width'],
+					marker='o',
+					ms=formatter['marker_size'],
+					mew=formatter['marker_edge_width'],
+					mfc=formatter['marker_face_color'])
+
+			for df in comsol_dfs:
+				ax.plot(df['loc'],
+						df['mes'])
+
+		# data type configuration:
+		if data_type == 'temperature':
+			yticks, ylim = self.generate_yaxis_ticks_temp_gradient(core_temps, wall_temps)
+			ylabel = 'Temperature, °C'
+		elif data_type == 'moisture':
+			yticks = [450, 500, 550]
+			ylim = [450, 550]
+			ylabel = 'Moisture, w%'
+		else:
+			yticks = 0
+			ylim = 0
+			ylabel = 0
+
+		# configuration:
+		legend = ax.legend(loc='lower right',
+						   fontsize=formatter['legend_size'],
+						   handlelength=formatter['legend_length'])
+		legend.get_frame().set_linewidth(formatter['legend_frame_width'])
+		legend.get_frame().set_edgecolor(formatter['legend_edge_color'])
+		if curr_row_ind == max_row_ind:
+			ax.set_xlabel('Distance from core, cm', size=formatter['label_size'], labelpad=formatter['labelpad'])
+		if curr_col_ind == 0:
+			ax.set_ylabel(ylabel, size=formatter['label_size'])
+
+		if xscale == 'log':
+			ax.set_xscale(xscale)
+			ax.set_xlim([0.1, 27])
+		else:  						# this means xscale=='linear'
 			ax.set_xlim([1, 27])
 
 		ax.set_ylim(ylim)
@@ -785,7 +1017,6 @@ class PlotMeasurementFigures:
 						model['temp'],
 						lw=formatter['line_width'],
 						linestyle='--',
-						linewidth=2,
 						color='dimgrey')
 
 	def calculate_mean(self, timestamp, sensors):
@@ -804,11 +1035,14 @@ class PlotMeasurementFigures:
 		If last_day==False, function returns date_range based on the total length of the dataframe.
 		"""
 
-		def round_down(t):
+		def round_down_day(t):
 			return t.replace(microsecond=0, second=0, minute=0, hour=0)
 
-		def round_up(t):
-			return t.replace(microsecond=0, second=0, minute=0, hour=0, day=t.day + 1)
+		def round_up_day(t):
+			one_day = pd.Timedelta(days=1)
+			t.replace(microsecond=0, second=0, minute=0, hour=0)
+			t += one_day
+			return t
 
 		def round_hour_down(t):
 			return t.replace(microsecond=0, second=0, minute=0)
@@ -828,8 +1062,8 @@ class PlotMeasurementFigures:
 			periods = 13
 			freq = '2H'
 		else:
-			start_time = round_down(df.index[0])
-			end_time = round_up(df.index[-1])
+			start_time = round_down_day(df.index[0])
+			end_time = round_up_day(df.index[-1])
 			diff = end_time - start_time
 			total_hours = diff.days * 24 + diff.seconds / 3600
 			if total_hours <= 144:  # up to 6 days
@@ -884,8 +1118,11 @@ class PlotMeasurementFigures:
 		return xticks, xlim
 
 	def generate_yaxis_ticks_temp_series(self):
-		max_val = max(self.df['U1'].max(), self.df['R1'].max(), self.df['D1'].max())
-		min_val = min(self.df['U6'].min(), self.df['R6'].min(), self.df['D6'].min())
+		#max_val = max(self.df['U1'].max(), self.df['R1'].max(), self.df['D1'].max())
+		#min_val = min(self.df['U6'].min(), self.df['R6'].min(), self.df['D6'].min())
+
+		max_val = max(self.df['core'])
+		min_val = min(self.df['wall'])
 
 		def roundup_max(val):
 			return int(ceil(val / 10) * 10)
@@ -954,6 +1191,12 @@ class PlotMeasurementFigures:
 			return diff.days * 24 + diff.seconds / 3600
 
 		self.df['hours'] = self.df.index.to_series().apply(calc_hour_diff)
+
+	def add_wall_temp_column(self):
+		self.df['wall'] = self.df[['K2', 'X3']].mean(axis=1)
+
+	def add_core_temp_column(self):
+		self.df['core'] = self.df[['X1', 'X2']].mean(axis=1)
 
 	def create_df_subset(self):
 		diff = pd.Timedelta(hours=24)

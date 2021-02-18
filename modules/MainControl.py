@@ -5,18 +5,32 @@ from modules.SensorCorrection import SensorCorrection
 from modules.PlotMeasurementFigures import PlotMeasurementFigures
 from modules.PlotCalibrationFigures import PlotCalibrationFigures
 from modules.DataProcessor import DataProcessor
-from modules.SampleData import SampleData
+from modules.SampleDataLarge import SampleDataLarge
+
 from modules.FigureFormatting import FigureFormatting
+from modules.ComsolModel import ComsolProcessor
+from modules.DirectoryGenerator import DirectoryGenerator
 
 
 # Sample selection
-sample_data = SampleData()
+sample_data = SampleDataLarge()
 sample = sample_data.SN2
-path = sample['dir']
+sample_name = sample['sample_name']
+path = sample['path']       # This is general path to large_test
 timestamps = sample['timestamps']
 fignames = sample_data.fignames
 
-# Folder path
+# Measurement and figure directories
+measurement_data_dir = '07_measurement_data\\'
+measuremnet_figures_dir = '08_measurement_figures\\'
+
+# Sample measurement data path:
+sample_measurement_data_path = path + measurement_data_dir + 'Sample_' + sample_name + '\\'
+
+# Sample measurement figures path:
+sample_measurement_figures_path = path + measuremnet_figures_dir + 'Sample_' + sample_name + '\\'
+
+# Sample measurement data subdirectoies:
 measurement_data = '02_measurement_data\\'
 comsol_data = '03_comsol_model\\'
 calib_data = '04_calib_data\\'
@@ -27,12 +41,13 @@ folders = {'01_combined_plots': '01_combined_plots\\',
            '04_gradient_temperature': '04_gradient_temperature\\',
            '05_gradient_moisture': '05_gradient_moisture\\',
            '06_last_24_hours': '06_last_24_hours\\'}
-save_path = path + figures_save
-comsol_path = path + comsol_data
-data_path = path + measurement_data
+
+save_path = sample_measurement_figures_path
+comsol_path = sample_measurement_data_path + comsol_data
+data_path = sample_measurement_data_path + measurement_data
 
 # Calibration fit figures (optional):
-calibration_figures = PlotCalibrationFigures(data_path, sample)
+#calibration_figures = PlotCalibrationFigures(data_path, sample)
 #calibration_figures.plot_calibration_figure()
 
 
@@ -54,16 +69,16 @@ columns = temperature_columns + moisture_columns + power_column
 
 # Setting file path:
 df = pd.DataFrame(columns=columns)
-for file in os.listdir(path + measurement_data):
+for file in os.listdir(sample_measurement_data_path + measurement_data):
     if file.endswith('csv'):
-        df_loc = pd.read_csv(path + measurement_data + file, index_col=0, names=columns)
+        df_loc = pd.read_csv(sample_measurement_data_path + measurement_data + file, index_col=0, names=columns)
         df = pd.concat([df, df_loc])
     else:
         pass
 
 # Measurement corrections:
 def corrector_func():
-    corrector = SensorCorrection(path + calib_data)
+    corrector = SensorCorrection(sample_measurement_data_path + calib_data)
     for name in temperature_columns:
         df[name] = df[name].apply(lambda mes_val: corrector.tempertaure_sensor_correction(name, mes_val))
     for temp_name, moist_name in zip(temperature_columns_moist, moisture_columns):
@@ -89,6 +104,13 @@ df.index = pd.to_datetime(df.index)
 data_processor = DataProcessor(sample)
 data_processor.delete_flawed_data(df)
 
+# Generating dfs from comsol solutions
+#comsol_processor = ComsolProcessor(sample, comsol_path)
+#comsol_dfs = comsol_processor.generate_comsol_df()
+comsol_dfs = []
+
+# Directory generator:
+directory_generator = DirectoryGenerator(sample)
 
 class PlottingOptions:
     def __init__(self):
@@ -165,6 +187,13 @@ class PlottingOptions:
                                                    formatter=formatter.std_paper_3x1_full_width,
                                                    xaxis_type='datetime',
                                                    last_day=True)
+
+    def plot_special_comsol_solution_plots(self, xscale):
+        self.plot_figures.plot_temperature_gradient_with_comsol(folder=folders['04_gradient_temperature'],
+                                                                formatter=formatter.std_paper_1x1_partial_width,
+                                                                xscale=xscale,
+                                                                comsol_dfs=comsol_dfs)
+
 
     def plot_everything(self, xscale):
         self.all_combined_plot(xscale)

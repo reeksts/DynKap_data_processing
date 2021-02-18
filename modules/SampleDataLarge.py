@@ -1,7 +1,7 @@
 import pandas as pd
 
 
-class SampleData:
+class SampleDataLarge:
 	def __init__(self):
 		self.fignames = {'time series temp - up': 'time_series_temp_up',
 						 'time series temp - right': 'time_series_temp_right',
@@ -29,23 +29,50 @@ class SampleData:
 								   [pd.Timestamp(2020, 11, 3, 20, 20), '20 degC core'],
 								   [pd.Timestamp(2020, 11, 4, 10, 10), '50 degC core'],
 								   [pd.Timestamp(2020, 11, 7, 15, 10), '60 degC core']],
-					'core_sensors': ['X1', 'X2'],
-					'wall_sensors': ['K1', 'K2', 'K3'],
-					'del_data': []}
-
-
-		self.SN2 = {'dir': 'C:\\Users\\karlisr\\OneDrive - NTNU\\3_PostDoc_Sintef\\01_laboratory_work\\01_large_test\\'
-						   '07_testing_data\\02_Sample_2_Vassfjell_4%_fines_Pallet_2\\',
-					'timestamps': [[pd.Timestamp(2021, 1, 19, 14, 30), '154W core'],
-								   [pd.Timestamp(2021, 1, 26, 8, 00), '174W core'],
-								   [pd.Timestamp(2021, 2, 1, 8, 00), '194W core'],
-								   [pd.Timestamp(2021, 2, 5, 8, 00), '214W core'],
-								   [pd.Timestamp(2021, 2, 15, 8, 00), '288W core']],
 					'periods': [{'start': 'timestamp', 'end': 'timestamp', 'name': 'name'},
 								{'start': 'timestamp', 'end': 'timestamp', 'name': 'name'},
 								{'start': 'timestamp', 'end': 'timestamp', 'name': 'name'},
 								{'start': 'timestamp', 'end': 'timestamp', 'name': 'name'},
 								{'start': 'timestamp', 'end': 'timestamp', 'name': 'name'}],
+					'sensors': {'temp_up': {'sensors': ['U1', 'U2', 'U3', 'U4', 'U5', 'U6'],
+											'locations': [4, 8, 12, 16, 20, 24],
+											'direction_name': 'Direction - up'},
+								'temp_right': {'sensors': ['R1', 'R2', 'R3', 'R4', 'R5', 'R6'],
+											   'locations': [4, 8, 12, 16, 20, 24],
+											   'direction_name': 'Direction - up'},
+								'temp_down': {'sensors': ['D1', 'D2', 'D3', 'D4', 'D5', 'D6'],
+											  'locations': [4, 8, 12, 16, 20, 24],
+											  'direction_name': 'Direction - up'},
+								'moist_up': {'sensors': ['MS1', 'MS2', 'MS3', 'MS4'],
+											 'locations': [4, 8, 12, 16],
+											 'direction_name': 'Direction - up'},
+								'moist_right': {'sensors': ['MS5', 'MS6', 'MS7', 'MS8'],
+												'locations': [4, 8, 12, 16],
+												'direction_name': 'Direction - up'},
+								'moist_down': {'sensors': ['MS9', 'MS10', 'MS11', 'MS12'],
+											   'locations': [4, 8, 12, 16],
+											   'direction_name': 'Direction - up'}},
+					'core_sensors': {'sensors': ['X1', 'X2'],
+									 'locations': [0, 26]},
+					'wall_sensors': {'sensors': ['K1', 'K2', 'K3'],
+									 'locations': [0, 26]},
+					'del_data': [],
+					'comsol_files': ['comsol_model_288W.csv']}
+
+		self.SN2 = {'sample_name': 'SN2',
+					#'dir': 'C:\\Users\\karlisr\\OneDrive - NTNU\\3_PostDoc_Sintef\\01_laboratory_work\\01_large_test\\'
+					#	   '07_testing_data\\02_Sample_2_Vassfjell_4%_fines_Pallet_2\\',
+					'path': 'C:\\Users\\karlisr\\OneDrive - NTNU\\3_PostDoc_Sintef\\01_laboratory_work\\01_large_test\\',
+					'timestamps': [[pd.Timestamp(2021, 1, 19, 14, 30), '154W core'],
+								   [pd.Timestamp(2021, 1, 26, 8, 00), '174W core'],
+								   [pd.Timestamp(2021, 2, 1, 8, 00), '194W core'],
+								   [pd.Timestamp(2021, 2, 5, 8, 00), '214W core'],
+								   [pd.Timestamp(2021, 2, 15, 8, 00), '288W core']],
+					'phases': [{'start': 'timestamp', 'end': 'timestamp', 'name': '154W_core'},
+								{'start': 'timestamp', 'end': 'timestamp', 'name': '174W_core'},
+								{'start': 'timestamp', 'end': 'timestamp', 'name': '196W_core'},
+								{'start': 'timestamp', 'end': 'timestamp', 'name': '217W_core'},
+								{'start': 'timestamp', 'end': 'timestamp', 'name': '290W_core'}],
 					'core_sensors': {'sensors': ['X1', 'X2'],
 									 'locations': [0, 26]},
 					'wall_sensors': {'sensors': ['K2', 'X3'],
@@ -70,4 +97,11 @@ class SampleData:
 											'direction_name': 'Direction - up'}},
 					'del_data': [{'sensor': 'R1',
 								  'start': pd.Timestamp(2021, 2, 6, 12, 40),
-								  'end': pd.Timestamp(2021, 2, 8, 17, 40)}]}
+								  'end': pd.Timestamp(2021, 2, 8, 17, 40)}],
+					'comsol_files': ['comsol_model_288W.csv'],
+					'sample_props': {'porosity': 0.4,
+									 'ks': 2.66,
+									 'rhos': 3.02,
+									 'w%': 3.0}}
+
+
