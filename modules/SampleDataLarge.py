@@ -102,6 +102,6 @@ class SampleDataLarge:
 					'sample_props': {'porosity': 0.4,
 									 'ks': 2.66,
 									 'rhos': 3.02,
-									 'w%': 3.0}}
+									 'w_grav': 3.0}}
 
 

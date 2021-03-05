@@ -4,8 +4,8 @@ from matplotlib.ticker import FormatStrFormatter
 import pandas as pd
 import numpy as np
 from math import ceil, floor
-from modules.FigureFormatting import FigureFormatting
 from modules.ComsolModel import ComsolModel
+from modules.MiscCalculations import TempDistSolver, ThermalConductivity
 
 plt.style.use('seaborn-colorblind')
 
@@ -53,6 +53,22 @@ class PlotMeasurementFigures:
 					 [self.temp_grad, 'gradient'],
 					 [self.moist_ser, 'series'],
 					 [self.moist_grad, 'gradient']]
+
+		# Sample thermal conductivity (dry thermal conductivity and moist thermal conductivity)
+		porosity = self.sample['sample_props']['porosity']
+		ks = self.sample['sample_props']['ks']
+		rhos = self.sample['sample_props']['rhos']
+		w_grav = self.sample['sample_props']['w_grav']
+
+		thermal = ThermalConductivity(porosity, ks, rhos, w_grav)
+		self.kdry, self.kmoist = thermal.calculate_thermal_conductivity()
+		print(self.kdry)
+		print(self.kmoist)
+
+
+		# Initialize two zone solver
+		self.zone_solver = TempDistSolver()
+
 
 	def plot_all_measurements2(self,
 							   nrows,
@@ -851,6 +867,8 @@ class PlotMeasurementFigures:
 				core_temp = pd.Series(self.calculate_mean(timestamp[0], self.sample['core_sensors']['sensors']).mean())
 				sensors_temp = self.calculate_mean(timestamp[0], direction['sensors'])
 				wall_temp = pd.Series(self.calculate_mean(timestamp[0], self.sample['wall_sensors']['sensors']).mean())
+				power = self.calculate_mean(timestamp[0], 'power')
+				print(power)
 				grad_values = core_temp.append(sensors_temp)
 				grad_values = grad_values.append(wall_temp)
 				core_temps.append(core_temp.values)
@@ -922,6 +940,12 @@ class PlotMeasurementFigures:
 						lw=formatter['line_width'],
 						linestyle='--',
 						color='dimgrey')
+
+		# theoretical model fit:
+		if data_type == 'temperature':
+			temp_dist = self.zone_solver.two_zone_solver(self.kdry, self.kmoist,
+														 float(wall_temp), float(core_temp), power)
+
 
 	def executor_gradients_with_comsol(self,
 						   			   ax,

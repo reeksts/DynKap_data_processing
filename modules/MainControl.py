@@ -11,6 +11,8 @@ from modules.FigureFormatting import FigureFormatting
 from modules.ComsolModel import ComsolProcessor
 from modules.DirectoryGenerator import DirectoryGenerator
 
+from modules.MiscCalculations import TempDistSolver, ThermalConductivity
+
 
 # Sample selection
 sample_data = SampleDataLarge()
@@ -20,9 +22,22 @@ path = sample['path']       # This is general path to large_test
 timestamps = sample['timestamps']
 fignames = sample_data.fignames
 
+# Sample thermal conductivity (dry thermal conductivity and moist thermal conductivity)
+porosity = sample['sample_props']['porosity']
+ks = sample['sample_props']['ks']
+rhos = sample['sample_props']['rhos']
+w_grav = sample['sample_props']['w_grav']
+
+thermal = ThermalConductivity(porosity, ks, rhos, w_grav)
+kdry, kmoist = thermal.calculate_thermal_conductivity()
+
+# Initialize two zone solver
+zone_solver = TempDistSolver()
+
+
 # Measurement and figure directories
-measurement_data_dir = '07_measurement_data\\'
-measuremnet_figures_dir = '08_measurement_figures\\'
+measurement_data_dir = '01_measurement_data\\'
+measuremnet_figures_dir = '02_measurement_figures\\'
 
 # Sample measurement data path:
 sample_measurement_data_path = path + measurement_data_dir + 'Sample_' + sample_name + '\\'

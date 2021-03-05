@@ -4,7 +4,7 @@ import os
 class DirectoryGenerator:
 	def __init__(self, sample):
 		general_path = sample['path']  	# this is a general path to large_test
-		figure_output_dir = '08_measurement_figures\\'
+		figure_output_dir = '02_measurement_figures\\'
 		figure_output_path = general_path + figure_output_dir
 		sample_name = sample['sample_name']
 
