@@ -1,5 +1,6 @@
-mylist = ['a', 'aa', 'aaa']
 
-for index, element in enumerate(mylist):
-	print(index)
-	print(element)
+
+if 1 is True:
+	print('yooo')
+else:
+	print('nooo')

@@ -2,34 +2,48 @@
   <dictionary name="karlisr">
     <words>
       <w>becf</w>
+      <w>borderaxespad</w>
       <w>calib</w>
+      <w>coef</w>
+      <w>coefs</w>
       <w>columnspan</w>
       <w>comsol</w>
+      <w>correceted</w>
       <w>dataframe</w>
       <w>dataframes</w>
       <w>dataset</w>
+      <w>datasets</w>
       <w>datatype</w>
       <w>datetimes</w>
       <w>dimgray</w>
       <w>dimgrey</w>
       <w>direc</w>
+      <w>facecolor</w>
       <w>fignames</w>
       <w>figsize</w>
       <w>ggplot</w>
       <w>grav</w>
+      <w>handlelenght</w>
+      <w>handlelength</w>
       <w>hspace</w>
       <w>karlisr</w>
       <w>labelpad</w>
+      <w>labelspacing</w>
       <w>ncols</w>
       <w>ndarray</w>
       <w>nrows</w>
+      <w>ntnu</w>
+      <w>perc</w>
       <w>precalculation</w>
+      <w>preprocessing</w>
       <w>rounddown</w>
       <w>savename</w>
       <w>seaborn</w>
+      <w>sintef</w>
       <w>styler</w>
       <w>subframes</w>
       <w>tdiff</w>
+      <w>vals</w>
       <w>xaxis</w>
       <w>xlim</w>
       <w>xscale</w>

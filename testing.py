@@ -1,34 +1,36 @@
-mylist = ['a', 'aa', 'aaa']
-current_idx = 0
+import matplotlib.pyplot as plt
 
-# solution:
-for index, element in enumerate(mylist):
-	if index == len(mylist) - 1:
-		# Case: this is teh last element
-		pass
-	else:
-		myvar = mylist[index + 1]
-		if len(myvar) == 2:
-			# Case: this not the last element and the length of next element is 2
-			pass
+def plotter(ax):
+	plot_list = []
 
-		else:
-			# Case: this is not the last element and the length of next element is not 2
-			pass
+	plot = ax.plot([1, 2, 3, 4, 5], [1, 2, 3, 4, 5], label='label')
+	plot_list.append(plot[0])
+	plot = ax.plot([1, 2, 3, 4, 5], [2, 3, 4, 5, 6], label='label')
+	plot_list.append(plot[0])
+	ax_twin = plt.twinx(ax)
+	plot = ax_twin.plot([1, 2, 3, 4, 5], [5, 4, 3, 2, 1], label='label')
+	plot_list.append(plot[0])
+	ax_twin.set_ylabel('Axis label')
 
-for element in mylist:
-	if current_idx == len(mylist)-1:
-		# Case: this is teh last element
-		pass
+	labels = [plot.get_label() for plot in plot_list]
+	legend = ax_twin.legend(
+		plot_list,
+		labels,
+		ncol=3,
+		loc='center left',
+		bbox_to_anchor=(1.05, 0.5))
 
-	myvar = mylist[current_idx+1]
-	elif len(myvar) == 2:
-		# Case: this nto teh last element and the next element length is 2
-		pass
 
-	else:
-		# Case: this is not the last element and the next element length is not 2 ()
-		pass
+fig, axes = plt.subplots(ncols=1, nrows=3, figsize=(28/2.54, 12/2.54), sharex='col')
 
-	current_idx += 1
+for ax in axes:
+	plotter(ax)
+
+plt.tight_layout(pad=0.2, h_pad=0.2)
+
+plt.show()
+
+fig.savefig('testing',
+			dpi=300)
+
 
