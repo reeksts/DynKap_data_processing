@@ -581,7 +581,95 @@ class SampleDataLarge:
 			}
 		}
 
-		self.SN8 = {'sample_name': 'SN8'}
+		self.SN8 = {
+			'sample_name': 'SN8',
+			'columns': [
+				'U1', 'U2', 'U3', 'U4', 'U5', 'U6', 'R1', 'R2',
+				'R3', 'R4', 'R5', 'R6', 'U7', 'U8', 'U9', 'U10',
+				'D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'C1', 'C2',
+				'W1', 'D7', 'D8', 'D9', 'D10', 'X1', 'W2', 'X2',
+				'MS1', 'MS2', 'MS3', 'MS4', 'MS5', 'MS6',
+				'MS7', 'MS8', 'MS9', 'MS10', 'MS11', 'MS12',
+				'power'
+			],
+			'temperature_columns': [
+				'U1', 'U2', 'U3', 'U4', 'U5', 'U6', 'U7', 'U8', 'U9', 'U10',
+				'R1', 'R2', 'R3', 'R4', 'R5', 'R6',
+				'D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7', 'D8', 'D9', 'D10',
+				'C1', 'C2', 'W1', 'W2', 'X1', 'X2',
+			],
+			'temperature_columns_main': [
+				'U1', 'U2', 'U3', 'U4', 'U5', 'U6',
+				'R1', 'R2', 'R3', 'R4', 'R5', 'R6',
+				'D1', 'D2', 'D3', 'D4', 'D5', 'D6',
+			],
+			'temperature_columns_moist': [
+				'U1', 'U2', 'U3', 'U4',
+				'R1', 'R2', 'R3', 'R4',
+				'D1', 'D2', 'D3', 'D4',
+			],
+			'temperature_columns_ext': ['C1', 'C2', 'X1', 'X2', 'W1', 'W2'],
+			'moisture_columns': [
+				'MS1', 'MS2', 'MS3', 'MS4', 'MS5', 'MS6',
+				'MS7', 'MS8', 'MS9', 'MS10', 'MS11', 'MS12',
+			],
+			'power_column': ['power'],
+			'phase_names': ['100W_core'],
+			'hot_end_sensors': {
+				'sensors': ['C1', 'C2'],
+				'locations': [0.1],
+			},
+			'cold_end_sensors': {
+				'sensors': ['W1', 'W2'],
+				'locations': [26],
+			},
+			'sensors': {
+				'temp_up': {
+					'sensors': ['U1', 'U2', 'U3', 'U4', 'U5', 'U6', 'U7', 'U8', 'U9', 'U10'],
+					'locations': [1.3, 2.7, 4, 6, 8, 10, 12, 16, 20, 24],
+					'direction_name': 'Direction - up',
+				},
+				'temp_right': {
+					'sensors': ['R1', 'R2', 'R3', 'R4', 'R5', 'R6'],
+					'locations': [4, 8, 12, 16, 20, 24],
+					'direction_name': 'Direction - right',
+				},
+				'temp_down': {
+					'sensors': ['D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7', 'D8', 'D9', 'D10'],
+					'locations': [1.3, 2.7, 4, 6, 8, 10, 12, 16, 20, 24],
+					'direction_name': 'Direction - down',
+				},
+				'moist_up': {
+					'sensors': ['MS1', 'MS2', 'MS3', 'MS4'],
+					'temp_sensors': ['U3', 'U5', 'U7', 'U8'],
+					'locations': [4, 8, 12, 16],
+					'direction_name': 'Direction - up',
+				},
+				'moist_right': {
+					'sensors': ['MS5', 'MS6', 'MS7', 'MS8'],
+					'temp_sensors': ['R1', 'R2', 'R3', 'R4'],
+					'locations': [4, 8, 12, 16],
+					'direction_name': 'Direction - right',
+				},
+				'moist_down': {
+					'sensors': ['MS9', 'MS10', 'MS11', 'MS12'],
+					'temp_sensors': ['D3', 'D5', 'D7', 'D8'],
+					'locations': [4, 8, 12, 16],
+					'direction_name': 'Direction - down',
+				},
+			},
+			'other_sensors': [],
+			'failed_sensors': [],
+			'del_data': [],
+			'comsol_files': [],
+			'sample_props': {
+				'porosity': 0.4,
+				'ks': 2.66,
+				'rhos': 3.02,
+				'w_grav': 3.0
+			}
+		}
+
 		self.SN9 = {'sample_name': 'SN9'}
 		self.SN10 = {'sample_name': 'SN10'}
 
@@ -591,7 +679,7 @@ class SampleDataLarge:
 			self.SN5,
 			self.SN6,
 			self.SN7,
-			#self.SN8,
+			self.SN8,
 			#self.SN9,
 			#self.SN10,
 		]

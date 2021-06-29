@@ -10,7 +10,7 @@ class DataProcessor:
 		self.small_test_data = small_test_data
 		self.test_setups = [
 			self.large_test_data,
-			self.small_test_data,
+			#self.small_test_data,
 		]
 
 		self.measurement_folder = '02_measurement_data'

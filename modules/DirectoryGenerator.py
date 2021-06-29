@@ -51,6 +51,14 @@ class DirectoryGenerator:
 			if not os.path.exists(child_subdirectory):
 				os.mkdir(child_subdirectory)
 
+				# inner 01_calibrated_datasets folder generation:
+				if folder == '02_measurement_data':
+					inner_child_subdirectory = os.path.join(parent_directory, folder, '01_calibrated_datasets')
+					if not os.path.exists(inner_child_subdirectory):
+						os.mkdir(inner_child_subdirectory)
+
+
+
 		# Generate child subdirectories (MASTER, PHASE1, PHASE2, ..., etc)
 		if 'phase_names' in active_sample:
 			phase_folders = ['PHASE_MASTER']
